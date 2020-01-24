@@ -1,0 +1,21 @@
+<div class="mt">
+  <ngx-datatable class="material table" [rows]="rows" [columnMode]="'force'" [headerHeight]="50"
+                 [rowHeight]="50" [scrollbarV]="true" [scrollbarH]="false" [loadingIndicator]="loading">
+    <ngx-datatable-column name="Question" [resizeable]="false">
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        {{row.company}}
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column name="Score" [resizeable]="false">
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        {{row.name}}
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column name="Action" [resizeable]="false">
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        {{row.gender}}
+      </ng-template>
+    </ngx-datatable-column>
+  </ngx-datatable>
+</div>
+

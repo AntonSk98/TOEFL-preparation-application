@@ -1,0 +1,77 @@
+<hr class="line">
+<div class="d-flex justify-content-between">
+  <div class="calendar w-60 mt-4">
+    <p class="center m-0 instruction">click the calendar to set your test date!</p>
+    <div class="d-flex flex-column">
+    <span class="center" #button>
+      <fa-icon [icon]="faCalendar"
+               class="pl-1 calendar-icon"
+               (click)="datepicker.toggle()">
+      </fa-icon>
+    </span>
+      <input  class="calendar-input center"
+              [minDate]="today"
+              [(ngModel)]="testDate" ngbDatepicker
+              #datepicker="ngbDatepicker"
+              readonly="readonly"
+              [placement]="'bottom'"
+              [positionTarget]="button"
+              (dateSelect)="onDateSelected()">
+    </div>
+    <p class="remains">
+    <span>
+      {{dayRemained}}
+      <span *ngIf="dayRemained > 1">days remain</span>
+      <span *ngIf="dayRemained <= 1">day remains</span>
+    </span> before your official TOEFL exam
+    </p>
+  </div>
+  <div class="score w-40 mt-4 score-border">
+    <div class="d-flex pt-4 pl-3 pr-3 font-weight-bold">
+      <div class="w-50">Target score<fa-icon [icon]="faQuestion" class="ml-1 pointer" ngbTooltip={{targetScore}} triggers="click:blur"></fa-icon></div>
+      <div class="w-50">Score averages<fa-icon [icon]="faQuestion" class="ml-1 pointer" ngbTooltip={{averageScore}} triggers="click:blur"></fa-icon></div>
+    </div>
+    <hr>
+    <div class="d-flex pl-3 pr-3">
+      <div class="w-50">
+        <div class="mb-3">Reading:
+          <span *ngIf="!isEdited">{{progress.targetReading}}</span>
+          <input *ngIf="isEdited" class="form-control target-input" [(ngModel)]="progress.targetReading" type="number"
+                 (keyup)="checkReading()" min="0" max="30" onkeydown="return event.keyCode !== 69 && event.keyCode !== 190">
+        </div>
+        <div class="mb-3">Listening:
+          <span *ngIf="!isEdited">{{progress.targetListening}}</span>
+          <input *ngIf="isEdited" class="form-control target-input" [(ngModel)]="progress.targetListening" type="number"
+                 (keyup)="checkListening()" min="0" max="30" onkeydown="return event.keyCode !== 69 && event.keyCode !== 190">
+        </div>
+        <div class="mb-3">Speaking:
+          <span *ngIf="!isEdited">{{progress.targetSpeaking}}</span>
+          <input *ngIf="isEdited" class="form-control target-input" [(ngModel)]="progress.targetSpeaking" type="number"
+                 (keyup)="checkSpeaking()" min="0" max="30" onkeydown="return event.keyCode !== 69 && event.keyCode !== 190">
+        </div>
+        <div>Writing:
+          <span *ngIf="!isEdited">{{progress.targetWriting}}</span>
+          <input *ngIf="isEdited" class="form-control target-input" [(ngModel)]="progress.targetWriting" type="number"
+                 (keyup)="checkWriting()" min="0" max="30" onkeydown="return event.keyCode !== 69 && event.keyCode !== 190">
+        </div>
+      </div>
+      <div class="w-50">
+        <div class="mb-3">Reading: {{progress.averageReading}}</div>
+        <div class="mb-3">Listening: {{progress.averageListening}}</div>
+        <div class="mb-3">Speaking: {{progress.averageSpeaking}}</div>
+        <div>Writing: {{progress.averageWriting}}</div>
+      </div>
+    </div>
+    <hr>
+    <hr style="margin-top: -12px">
+    <div class="d-flex justify-content-between pl-3 pr-3">
+      <div class="font-weight-bold w-50">Overall:
+         {{sumTarget}}</div>
+      <div class="font-weight-bold w-50">Overall: {{progress.averageReading + progress.averageListening + progress.averageSpeaking + progress.averageWriting}}</div>
+    </div>
+    <hr>
+    <div *ngIf="!isEdited" class="edit mb-4 ml-3" (click)="changeEdited()"><fa-icon [icon]="faEdit" class="pl-1"></fa-icon> Edit target score</div>
+    <button *ngIf="isEdited" class="btn btn-sm btn pr-5 mb-4 ml-3" (click)="toSave()" style="font-size: 20px">Save</button>
+  </div>
+</div>
+

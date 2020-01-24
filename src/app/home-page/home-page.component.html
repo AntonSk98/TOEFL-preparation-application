@@ -1,0 +1,91 @@
+<div class="d-flex vh100">
+  <div class="w-20 menu">
+    <img src="https://lh3.googleusercontent.com/eCW4WFb2kiUYkHmw-q2YicIdH5XXWc7Hc6WGV4R56ERoqoaQWw2gzTQm3O5q9I-wt2imjFAlY3-rfHDafEBX0BwmxGNI8UGk8A-CC4Jmn69nWNsnpT4bE8uFtiJ3TmL6s0kTAAPBxJ-C0sZRC8mK_rjd1bg-L9RyAU3IfivpXaebOIXeknI8Xibu0z4CkbtRJDx2nsdFLOqumD0aATwxtfR8-jGMC2qUDfIsQh4xfMHNh29PjjVuAUgEVCKnIMXZZyS24SAykGeulZzK3xynrWRPoJyADRuPen0ZngXK1LMKrSdDEZS_04t-OlKLPC0d216-49dmz6vFb8B0oojluQRT55R-r9mX1gtTzrmZYSYmRmvmRl-92-EdGAnSSlTzIhdh4Ym7VQjVX-EwDSUlDo56yl4B-4wGosIi5M9STWqJcvjMaRtKKLa1_p50S5OVMwBZP5oCCTiQkHY_QZsVEJNtu0zYazuaHNXCkKrDO5JiZleVdteaDDHd4zoNdgFcpuM5jt7TBQMZW29TiYW9mxJivj1flLfmSKQwRfN6qxc4kIF-iuVnenOamS_VMzCv0B9j-TKJGwk-u1nyy56PQ_XsKYmdL3PDpZSMPf5y1MoALP_zUHPPBkMhpvnqO5T5648LlKYHceAqNl7bD8WKnE850fRYqngpsuSIwuDOgKDZLsGdXqrRq-k=w484-h160-no" class="w-100" alt="">
+    <div class="schedule p-3">
+      <span class="title" (click)="adjustTitle($event.target.innerText)"
+        [style.opacity] = "sectionTitle==sections.progress ? '1' : ''">{{sections.progress}}</span>
+    </div>
+    <div class="reading p-3">
+      <span class="title" (click)="adjustTitle($event.target.innerText)"
+        [style.opacity] = "sectionTitle==sections.reading ? '1' : ''">{{sections.reading}}</span>
+    </div>
+    <div class="listening p-3">
+      <span class="title" (click)="adjustTitle($event.target.innerText)"
+        [style.opacity] = "sectionTitle==sections.listening ? '1' : ''">{{sections.listening}}</span>
+    </div>
+    <div class="speaking p-3">
+      <span class="title" (click)="adjustTitle($event.target.innerText)"
+        [style.opacity] = "sectionTitle==sections.speaking ? '1' : ''">{{sections.speaking}}</span>
+    </div>
+    <div class="writing p-3">
+      <span class="title" (click)="adjustTitle($event.target.innerText)"
+        [style.opacity] = "sectionTitle==sections.writing ? '1' : ''">{{sections.writing}}</span>
+    </div>
+    <div class="remove-all p-3">
+      <span class="title remove">Remove all progress<fa-icon [icon]="faTrash" class="pl-1"></fa-icon></span>
+    </div>
+  </div>
+
+  <div class="main-block pl-5 pr-5 pt-3 w-80 vh100">
+    <div class="d-flex justify-content-between flex-nowrap">
+      <div class="progress-width" [style.visibility] = "sectionTitle == sections.progress ? 'hidden' : ''">
+        <div class="completeness">
+          {{completeness}}% completed!
+        </div>
+        <ngb-progressbar [type]="defineTypeOfProgressBar()" textType="white" [value]="completeness" height=15px></ngb-progressbar>
+      </div>
+      <div class="completeness analysis" [style.visibility] = "sectionTitle == sections.progress ? 'hidden' : ''">
+        <div>Target Score: <span class="text-success">{{targetScore}}</span></div>
+        <div>Average Score:
+          <span *ngIf="averageScore>=targetScore" class="text-success">{{averageScore}}</span>
+          <span *ngIf="averageScore<targetScore" class="text-danger">{{averageScore}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="personalized-progress" [style.visibility] = "sectionTitle != sections.progress ? 'hidden' : ''">Personalized progress</div>
+    <div class="pt-4">
+      <div *ngIf="sectionTitle == sections.reading ||
+        sectionTitle == sections.listening ||
+        sectionTitle == sections.progress" class="section-name">{{sectionTitle}} <span *ngIf="sectionTitle!=sections.progress">practice</span>
+      </div>
+      <div *ngIf="sectionTitle == sections.speaking" class="d-flex justify-content-between">
+        <div class="section-name section-speaking mb" (click)="adjustSpeakingTitle($event.target.innerText)"
+             [style.color]="speakingSectionTitle == speaking.speakingOne ? 'black' : ''">
+          Speaking 1
+        </div>
+        <div class="section-name section-speaking" (click)="adjustSpeakingTitle($event.target.innerText)"
+             [style.color]="speakingSectionTitle == speaking.speakingTwo ? 'black' : ''">
+          Speaking 2
+        </div>
+        <div class="section-name section-speaking" (click)="adjustSpeakingTitle($event.target.innerText)"
+             [style.color]="speakingSectionTitle == speaking.speakingThree ? 'black' : ''">
+          Speaking 3
+        </div>
+        <div class="section-name section-speaking" (click)="adjustSpeakingTitle($event.target.innerText)"
+             [style.color]="speakingSectionTitle == speaking.speakingFour ? 'black' : ''">
+          Speaking 4
+        </div>
+        <div class="section-name section-speaking" (click)="adjustSpeakingTitle($event.target.innerText)"
+             [style.color]="speakingSectionTitle == speaking.speakingExOne ? 'black' : ''">
+          Ex. 1
+        </div>
+        <div class="section-name section-speaking" (click)="adjustSpeakingTitle($event.target.innerText)"
+             [style.color]="speakingSectionTitle == speaking.speakingExTwo ? 'black' : ''">
+          Ex. 2
+        </div>
+      </div>
+      <div *ngIf="sectionTitle == sections.writing" class="d-flex justify-content-start">
+        <div class="section-name mr-5 section-writing" (click)="adjustWritingTitle($event.target.innerText)"
+             [style.color]="writingSectionTitle == writing.integratedWriting ? 'black' : ''">
+          Integrated writing
+        </div>
+        <div class="section-name section-writing" (click)="adjustWritingTitle($event.target.innerText)"
+             [style.color]="writingSectionTitle == writing.independentWriting ? 'black' : ''">
+          Independent writing
+        </div>
+      </div>
+      <app-schedule *ngIf="sectionTitle == sections.progress"></app-schedule>
+      <app-datatable *ngIf="sectionTitle != sections.progress"></app-datatable>
+    </div>
+  </div>
+</div>
