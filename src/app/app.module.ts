@@ -9,6 +9,8 @@ import { ScheduleComponent } from './schedule/schedule.component';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { DatatableComponent } from './datatable/datatable.component';
 import {ElectronService} from 'ngx-electron';
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {ToastrModule} from "ngx-toastr";
 
 
 // noinspection AngularInvalidImportedOrDeclaredSymbol
@@ -24,7 +26,9 @@ import {ElectronService} from 'ngx-electron';
     NgbModule,
     FormsModule,
     FontAwesomeModule,
-    NgxDatatableModule
+    NgxDatatableModule,
+    BrowserAnimationsModule, // required animations module
+    ToastrModule.forRoot()
   ],
   providers: [ElectronService],
   bootstrap: [AppComponent]

@@ -87,3 +87,18 @@
 .mb {
   margin-bottom: 15.5px;
 }
+
+.closebar {
+  margin-top: -16px;
+  margin-left: -49px;
+  float: left;
+  cursor: pointer;
+  width: 20px;
+  height: 30px;
+  background-color: #5B5EA6;
+}
+
+.arrow {
+  color: white;
+  vertical-align: center;
+}

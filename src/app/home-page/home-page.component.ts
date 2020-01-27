@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faArrowCircleLeft, faArrowCircleRight } from '@fortawesome/free-solid-svg-icons';
 @Component({
   selector: 'app-home-page',
   templateUrl: './home-page.component.html',
@@ -13,9 +13,12 @@ export class HomePageComponent implements OnInit {
   speakingSectionTitle: string;
   writingSectionTitle: string;
   faTrash = faTrash;
+  faArrowCircleLeft = faArrowCircleLeft;
+  faArrowCircleRight = faArrowCircleRight;
   sections: Sections = new Sections();
   speaking: Speaking = new Speaking();
   writing: Writing = new Writing();
+  isShown = true;
   constructor(
   ) {
     this.sectionTitle = 'Reading';
@@ -23,6 +26,9 @@ export class HomePageComponent implements OnInit {
     this.writingSectionTitle = 'Integrated writing';
   }
 
+  hideShow() {
+    this.isShown = !this.isShown;
+  }
   ngOnInit() {
   }
 

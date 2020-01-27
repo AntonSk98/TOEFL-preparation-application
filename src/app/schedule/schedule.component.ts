@@ -4,6 +4,7 @@ import {NgbDate, NgbDateParserFormatter, NgbDateStruct} from '@ng-bootstrap/ng-b
 import {TargetService} from '../services/target.service';
 import {TargetSettings} from '../models/targetSettings';
 import {AverageProgress} from '../models/averageProgress';
+import {NotificationService} from "../services/notification.service";
 
 @Component({
   selector: 'app-schedule',
@@ -26,7 +27,8 @@ export class ScheduleComponent implements OnInit, OnDestroy {
 
   constructor(
     private targetService: TargetService, private ref: ChangeDetectorRef,
-    private parserFormatter: NgbDateParserFormatter) {
+    private parserFormatter: NgbDateParserFormatter,
+    private notificationService: NotificationService) {
   }
 
   ngOnInit() {
@@ -54,7 +56,7 @@ export class ScheduleComponent implements OnInit, OnDestroy {
   onDateSelected(): void {
     this.dayRemained = this.calculateRemainedDays(this.today, this.testDate);
     this.targetService.updateToeflDate(this.parserFormatter.format(this.testDate)).subscribe(value => {
-      console.log(value)
+      this.notificationService.showMessage(value);
     });
   }
   countSumTargetScore(): void {
@@ -79,7 +81,7 @@ export class ScheduleComponent implements OnInit, OnDestroy {
     }
     this.countSumTargetScore();
     this.targetService.updateToeflScore(this.targetSettings).subscribe(value => {
-      console.log(value)
+      this.notificationService.showMessage(value);
     });
   }
 
