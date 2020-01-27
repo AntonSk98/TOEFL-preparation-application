@@ -8,6 +8,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ScheduleComponent } from './schedule/schedule.component';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { DatatableComponent } from './datatable/datatable.component';
+import {ElectronService} from 'ngx-electron';
 
 
 // noinspection AngularInvalidImportedOrDeclaredSymbol
@@ -16,7 +17,7 @@ import { DatatableComponent } from './datatable/datatable.component';
     AppComponent,
     HomePageComponent,
     ScheduleComponent,
-    DatatableComponent
+    DatatableComponent,
   ],
   imports: [
     BrowserModule,
@@ -25,7 +26,7 @@ import { DatatableComponent } from './datatable/datatable.component';
     FontAwesomeModule,
     NgxDatatableModule
   ],
-  providers: [],
+  providers: [ElectronService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

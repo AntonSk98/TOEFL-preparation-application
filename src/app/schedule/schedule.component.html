@@ -35,43 +35,41 @@
     <div class="d-flex pl-3 pr-3">
       <div class="w-50">
         <div class="mb-3">Reading:
-          <span *ngIf="!isEdited">{{progress.targetReading}}</span>
-          <input *ngIf="isEdited" class="form-control target-input" [(ngModel)]="progress.targetReading" type="number"
+          <span *ngIf="!isEdited">{{targetSettings.targetReading | number}}</span>
+          <input *ngIf="isEdited" class="form-control target-input" [(ngModel)]="targetSettings.targetReading" type="number"
                  (keyup)="checkReading()" min="0" max="30" onkeydown="return event.keyCode !== 69 && event.keyCode !== 190">
         </div>
         <div class="mb-3">Listening:
-          <span *ngIf="!isEdited">{{progress.targetListening}}</span>
-          <input *ngIf="isEdited" class="form-control target-input" [(ngModel)]="progress.targetListening" type="number"
+          <span *ngIf="!isEdited">{{targetSettings.targetListening}}</span>
+          <input *ngIf="isEdited" class="form-control target-input" [(ngModel)]="targetSettings.targetListening" type="number"
                  (keyup)="checkListening()" min="0" max="30" onkeydown="return event.keyCode !== 69 && event.keyCode !== 190">
         </div>
         <div class="mb-3">Speaking:
-          <span *ngIf="!isEdited">{{progress.targetSpeaking}}</span>
-          <input *ngIf="isEdited" class="form-control target-input" [(ngModel)]="progress.targetSpeaking" type="number"
+          <span *ngIf="!isEdited">{{targetSettings.targetSpeaking}}</span>
+          <input *ngIf="isEdited" class="form-control target-input" [(ngModel)]="targetSettings.targetSpeaking" type="number"
                  (keyup)="checkSpeaking()" min="0" max="30" onkeydown="return event.keyCode !== 69 && event.keyCode !== 190">
         </div>
         <div>Writing:
-          <span *ngIf="!isEdited">{{progress.targetWriting}}</span>
-          <input *ngIf="isEdited" class="form-control target-input" [(ngModel)]="progress.targetWriting" type="number"
+          <span *ngIf="!isEdited">{{targetSettings.targetWriting}}</span>
+          <input *ngIf="isEdited" class="form-control target-input" [(ngModel)]="targetSettings.targetWriting" type="number"
                  (keyup)="checkWriting()" min="0" max="30" onkeydown="return event.keyCode !== 69 && event.keyCode !== 190">
         </div>
       </div>
       <div class="w-50">
-        <div class="mb-3">Reading: {{progress.averageReading}}</div>
-        <div class="mb-3">Listening: {{progress.averageListening}}</div>
-        <div class="mb-3">Speaking: {{progress.averageSpeaking}}</div>
-        <div>Writing: {{progress.averageWriting}}</div>
+        <div class="mb-3">Reading: {{averageProgress.averageReading}}</div>
+        <div class="mb-3">Listening: {{averageProgress.averageListening}}</div>
+        <div class="mb-3">Speaking: {{averageProgress.averageSpeaking}}</div>
+        <div>Writing: {{averageProgress.averageWriting}}</div>
       </div>
     </div>
     <hr>
     <hr style="margin-top: -12px">
     <div class="d-flex justify-content-between pl-3 pr-3">
-      <div class="font-weight-bold w-50">Overall:
-         {{sumTarget}}</div>
-      <div class="font-weight-bold w-50">Overall: {{progress.averageReading + progress.averageListening + progress.averageSpeaking + progress.averageWriting}}</div>
+      <div class="font-weight-bold w-50">Overall: {{sumTarget}}</div>
+      <div class="font-weight-bold w-50">Overall: {{averageProgress.averageReading + averageProgress.averageListening + averageProgress.averageSpeaking + averageProgress.averageWriting}}</div>
     </div>
     <hr>
     <div *ngIf="!isEdited" class="edit mb-4 ml-3" (click)="changeEdited()"><fa-icon [icon]="faEdit" class="pl-1"></fa-icon> Edit target score</div>
     <button *ngIf="isEdited" class="btn btn-sm btn pr-5 mb-4 ml-3" (click)="toSave()" style="font-size: 20px">Save</button>
   </div>
 </div>
-

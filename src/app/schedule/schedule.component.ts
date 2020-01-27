@@ -1,54 +1,92 @@
-import {Component, OnInit} from '@angular/core';
-import {faCalendar, faEdit, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import {NgbCalendar, NgbDateStruct, NgbInputDatepickerConfig} from '@ng-bootstrap/ng-bootstrap';
-import {Progress} from './progress';
+import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {faCalendar, faEdit, faQuestionCircle} from '@fortawesome/free-solid-svg-icons';
+import {NgbDate, NgbDateParserFormatter, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
+import {TargetService} from '../services/target.service';
+import {TargetSettings} from '../models/targetSettings';
+import {AverageProgress} from '../models/averageProgress';
 
 @Component({
   selector: 'app-schedule',
   templateUrl: './schedule.component.html',
   styleUrls: ['./schedule.component.css']
 })
-export class ScheduleComponent implements OnInit {
+export class ScheduleComponent implements OnInit, OnDestroy {
   targetScore = 'The target scores must range from 0 to 30';
   averageScore = 'The score averages are out of 30';
   isEdited = false;
+  sumTarget: number;
   faCalendar = faCalendar;
   faEdit = faEdit;
   faQuestion = faQuestionCircle;
-  progress: Progress = new Progress();
+  targetSettings: TargetSettings = new TargetSettings();
+  averageProgress: AverageProgress = new AverageProgress();
   today = {year: new Date().getFullYear(), month: new Date().getMonth() + 1, day: new Date().getDate()};
-  testDate = {year: new Date().getFullYear(), month: new Date().getMonth() + 1, day: new Date().getDate() + 2};
-  dayRemained = this.calculateRemainedDays(this.today, this.testDate);
-  sumTarget = this.progress.targetReading + this.progress.targetListening + this.progress.targetSpeaking + this.progress.targetWriting;
-  constructor(config: NgbInputDatepickerConfig, calendar: NgbCalendar) {
+  testDate: NgbDateStruct;
+  dayRemained: number;
+
+  constructor(
+    private targetService: TargetService, private ref: ChangeDetectorRef,
+    private parserFormatter: NgbDateParserFormatter) {
   }
+
   ngOnInit() {
+    this.targetService.getTargetScore().subscribe((value: TargetSettings) => {
+      this.targetSettings = value;
+      this.testDate = this.convertDateToNGBDATE(this.targetSettings.toeflDate);
+      this.dayRemained = this.calculateRemainedDays(this.today, this.testDate);
+      this.countSumTargetScore();
+    });
+  }
+  convertDateToNGBDATE(testDate: string): NgbDateStruct {
+    const date = new Date(testDate);
+    return {
+      day: date.getDate(),
+      month: date.getMonth() + 1,
+      year: date.getFullYear()
+    };
   }
   calculateRemainedDays(today: NgbDateStruct, testDate: NgbDateStruct): number {
     const test = new Date(testDate.year, testDate.month - 1, testDate.day);
     const now = new Date(today.year, today.month - 1, today.day);
-    return (test.getTime() - now.getTime()) / 1000 / 60 / 60 / 24;
+    return Math.round((test.getTime() - now.getTime()) / 1000 / 60 / 60 / 24);
   }
 
   onDateSelected(): void {
     this.dayRemained = this.calculateRemainedDays(this.today, this.testDate);
+    this.targetService.updateToeflDate(this.parserFormatter.format(this.testDate)).subscribe(value => {
+      console.log(value)
+    });
   }
-
+  countSumTargetScore(): void {
+    this.sumTarget = Number(this.targetSettings.targetReading) +
+      Number(this.targetSettings.targetListening) +
+      Number(this.targetSettings.targetSpeaking) +
+      Number(this.targetSettings.targetWriting);
+  }
   toSave() {
     this.changeEdited();
-    if (this.progress.targetReading == null) {this.progress.targetReading = 0; }
-    if (this.progress.targetListening == null) {this.progress.targetListening = 0; }
-    if (this.progress.targetWriting == null) {this.progress.targetWriting = 0; }
-    if (this.progress.targetSpeaking == null) {this.progress.targetSpeaking = 0; }
-    this.sumTarget = Number(this.progress.targetReading) +
-      Number(this.progress.targetListening) +
-      Number(this.progress.targetSpeaking) +
-      Number(this.progress.targetWriting);
+    if (this.targetSettings.targetReading == null) {
+      this.targetSettings.targetReading = 0;
+    }
+    if (this.targetSettings.targetListening == null) {
+      this.targetSettings.targetListening = 0;
+    }
+    if (this.targetSettings.targetWriting == null) {
+      this.targetSettings.targetWriting = 0;
+    }
+    if (this.targetSettings.targetSpeaking == null) {
+      this.targetSettings.targetSpeaking = 0;
+    }
+    this.countSumTargetScore();
+    this.targetService.updateToeflScore(this.targetSettings).subscribe(value => {
+      console.log(value)
+    });
   }
 
   changeEdited() {
     this.isEdited = !this.isEdited;
   }
+
   checkValue(value: number): number {
     if (value < 0) {
       return value = 0;
@@ -57,19 +95,24 @@ export class ScheduleComponent implements OnInit {
     }
     return value;
   }
+
   checkReading() {
-    this.progress.targetReading = this.checkValue(this.progress.targetReading);
+    this.targetSettings.targetReading = this.checkValue(this.targetSettings.targetReading);
   }
+
   checkListening() {
-    this.progress.targetListening = this.checkValue(this.progress.targetListening);
+    this.targetSettings.targetListening = this.checkValue(this.targetSettings.targetListening);
   }
 
   checkSpeaking() {
-    this.progress.targetSpeaking = this.checkValue(this.progress.targetSpeaking);
+    this.targetSettings.targetSpeaking = this.checkValue(this.targetSettings.targetSpeaking);
   }
 
   checkWriting() {
-    this.progress.targetWriting = this.checkValue(this.progress.targetWriting);
+    this.targetSettings.targetWriting = this.checkValue(this.targetSettings.targetWriting);
+  }
+
+  ngOnDestroy(): void {
   }
 }
 
