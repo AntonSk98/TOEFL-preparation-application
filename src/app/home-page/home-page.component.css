@@ -85,7 +85,7 @@
 }
 
 .mb {
-  margin-bottom: 15.5px;
+  margin-bottom: 15px;
 }
 
 .closebar {
@@ -96,9 +96,15 @@
   width: 20px;
   height: 30px;
   background-color: #5B5EA6;
+  border-radius: 0 0 20px;
 }
 
 .arrow {
   color: white;
   vertical-align: center;
+  font-size: 14px;
+}
+
+.nowrap {
+  white-space: nowrap !important;
 }

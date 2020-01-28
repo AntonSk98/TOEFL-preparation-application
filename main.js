@@ -87,5 +87,18 @@ TargetScore: {
   });
 }
 
+ReadingPart: {
+  ipcMain.on('get-reading', async () => {
+    const result = connection('readingPractice').select('id').select('readingTitle').select('score');
+    await result.then( rows => {
+      mainWindow.send('reading-sent', rows);
+    })
+      .catch(err => mainWindow.send("reading-sent", {
+        status: 'error',
+        message: 'Error occurred while getting reading tasks'
+      }))
+  })
+}
+
 
 // npm run start:electron

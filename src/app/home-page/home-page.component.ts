@@ -1,17 +1,42 @@
-import { Component, OnInit, Input } from '@angular/core';
+import {Component, OnInit, Input, ViewChild, AfterViewInit} from '@angular/core';
 import { faTrash, faArrowCircleLeft, faArrowCircleRight } from '@fortawesome/free-solid-svg-icons';
+import {animate, state, style, transition, trigger} from '@angular/animations';
+import {Sections} from '../models/sections';
+import {Speaking} from '../models/speaking';
+import {Writing} from '../models/writing';
+import {DataTableComponent} from '../datatable/data-table.component';
 @Component({
   selector: 'app-home-page',
   templateUrl: './home-page.component.html',
-  styleUrls: ['./home-page.component.css']
+  styleUrls: ['./home-page.component.css'],
+  animations: [
+    trigger('toggleMenu', [
+      state('open', style({
+        width: '20%',
+        opacity: '1'
+      })),
+      state('closed', style({
+        width: '0%',
+        opacity: '0.4',
+        visibility: 'hidden'
+      })),
+      transition('open => closed', [
+        animate('.5s')
+      ]),
+      transition('closed => open', [
+        animate('0.5s')
+      ]),
+    ])
+  ]
 })
-export class HomePageComponent implements OnInit {
+export class HomePageComponent implements OnInit, AfterViewInit {
+  @ViewChild(DataTableComponent, {static: false}) datatableComponent;
   @Input() completeness = 50;
   @Input() targetScore = 10;
   @Input() averageScore = 100;
   sectionTitle: string;
-  speakingSectionTitle: string;
-  writingSectionTitle: string;
+  speakingSectionTitle = '';
+  writingSectionTitle = '';
   faTrash = faTrash;
   faArrowCircleLeft = faArrowCircleLeft;
   faArrowCircleRight = faArrowCircleRight;
@@ -22,18 +47,30 @@ export class HomePageComponent implements OnInit {
   constructor(
   ) {
     this.sectionTitle = 'Reading';
-    this.speakingSectionTitle = 'Speaking 1';
-    this.writingSectionTitle = 'Integrated writing';
   }
 
   hideShow() {
     this.isShown = !this.isShown;
+    this.datatableComponent.resizeTable();
   }
   ngOnInit() {
   }
 
   adjustTitle(clickedSection: string) {
     this.sectionTitle = clickedSection;
+    if (clickedSection === this.sections.writing) {
+      this.writingSectionTitle = 'Integrated writing';
+      this.speakingSectionTitle = '';
+    } else if (clickedSection === this.sections.speaking) {
+      this.speakingSectionTitle = 'Speaking 1';
+      this.writingSectionTitle = '';
+    } else if (clickedSection !== this.sections.writing) {
+      this.writingSectionTitle = '';
+      this.speakingSectionTitle = '';
+    } else if (clickedSection !== this.sections.speaking) {
+      this.speakingSectionTitle = '';
+      this.writingSectionTitle = '';
+    }
   }
 
   defineTypeOfProgressBar(): string {
@@ -50,26 +87,7 @@ export class HomePageComponent implements OnInit {
   adjustWritingTitle(clickedWritingSection: string) {
     this.writingSectionTitle = clickedWritingSection;
   }
-}
 
-class Sections {
-  progress = 'Schedule & Target Score';
-  reading = 'Reading';
-  listening = 'Listening';
-  speaking = 'Speaking';
-  writing = 'Writing';
-}
-
-class Speaking {
-  speakingOne = 'Speaking 1';
-  speakingTwo = 'Speaking 2';
-  speakingThree = 'Speaking 3';
-  speakingFour = 'Speaking 4';
-  speakingExOne = 'Ex. 1';
-  speakingExTwo = 'Ex. 2';
-}
-
-class Writing {
-  integratedWriting = 'Integrated writing';
-  independentWriting = 'Independent writing';
+  ngAfterViewInit(): void {
+  }
 }

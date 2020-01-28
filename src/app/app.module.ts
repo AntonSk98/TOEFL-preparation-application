@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ScheduleComponent } from './schedule/schedule.component';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
-import { DatatableComponent } from './datatable/datatable.component';
+import { DataTableComponent } from './datatable/data-table.component';
 import {ElectronService} from 'ngx-electron';
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {ToastrModule} from "ngx-toastr";
@@ -19,7 +19,7 @@ import {ToastrModule} from "ngx-toastr";
     AppComponent,
     HomePageComponent,
     ScheduleComponent,
-    DatatableComponent,
+    DataTableComponent,
   ],
   imports: [
     BrowserModule,

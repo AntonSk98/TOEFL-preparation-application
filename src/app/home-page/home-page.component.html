@@ -1,28 +1,28 @@
 <div class="d-flex vh100">
-  <div class="w-20 menu" *ngIf="isShown == true">
+  <div [@toggleMenu]="isShown ? 'open' : 'closed'" class="w-20 menu">
     <img src="./logo.png" class="w-100" alt="">
     <div class="schedule p-3">
-      <span class="title" (click)="adjustTitle($event.target.innerText)"
+      <span class="title nowrap" (click)="adjustTitle($event.target.innerText)"
         [style.opacity] = "sectionTitle==sections.progress ? '1' : ''">{{sections.progress}}</span>
     </div>
     <div class="reading p-3">
-      <span class="title" (click)="adjustTitle($event.target.innerText)"
+      <span class="title nowrap" (click)="adjustTitle($event.target.innerText)"
         [style.opacity] = "sectionTitle==sections.reading ? '1' : ''">{{sections.reading}}</span>
     </div>
     <div class="listening p-3">
-      <span class="title" (click)="adjustTitle($event.target.innerText)"
+      <span class="title nowrap" (click)="adjustTitle($event.target.innerText)"
         [style.opacity] = "sectionTitle==sections.listening ? '1' : ''">{{sections.listening}}</span>
     </div>
     <div class="speaking p-3">
-      <span class="title" (click)="adjustTitle($event.target.innerText)"
+      <span class="title nowrap" (click)="adjustTitle($event.target.innerText)"
         [style.opacity] = "sectionTitle==sections.speaking ? '1' : ''">{{sections.speaking}}</span>
     </div>
     <div class="writing p-3">
-      <span class="title" (click)="adjustTitle($event.target.innerText)"
+      <span class="title nowrap" (click)="adjustTitle($event.target.innerText)"
         [style.opacity] = "sectionTitle==sections.writing ? '1' : ''">{{sections.writing}}</span>
     </div>
     <div class="remove-all p-3">
-      <span class="title remove">Remove all progress<fa-icon [icon]="faTrash" class="pl-1"></fa-icon></span>
+      <span class="title remove nowrap">Remove all progress<fa-icon [icon]="faTrash" class="pl-1"></fa-icon></span>
     </div>
   </div>
 
@@ -89,7 +89,24 @@
         </div>
       </div>
       <app-schedule *ngIf="sectionTitle == sections.progress"></app-schedule>
-      <app-datatable *ngIf="sectionTitle != sections.progress"></app-datatable>
+      <span *ngIf="(sectionTitle != sections.progress && speakingSectionTitle === '' && writingSectionTitle === '')">
+        <app-datatable *ngIf="sectionTitle===sections.reading"  [identification]="sections.reading"></app-datatable>
+        <app-datatable *ngIf="sectionTitle===sections.listening"  [identification]="sections.listening"></app-datatable>
+        <app-datatable *ngIf="sectionTitle === sections.writing"  [identification]="writing.integratedWriting"></app-datatable>
+        <app-datatable *ngIf="sectionTitle === sections.speaking"  [identification]="speaking.speakingOne"></app-datatable>
+      </span>
+      <span *ngIf="(sectionTitle != sections.progress && speakingSectionTitle !== '')">
+        <app-datatable *ngIf="speakingSectionTitle===speaking.speakingOne"  [identification]="speaking.speakingOne"></app-datatable>
+        <app-datatable *ngIf="speakingSectionTitle===speaking.speakingTwo"  [identification]="speaking.speakingTwo"></app-datatable>
+        <app-datatable *ngIf="speakingSectionTitle===speaking.speakingThree"  [identification]="speaking.speakingThree"></app-datatable>
+        <app-datatable *ngIf="speakingSectionTitle===speaking.speakingFour"  [identification]="speaking.speakingFour"></app-datatable>
+        <app-datatable *ngIf="speakingSectionTitle===speaking.speakingExOne"  [identification]="speaking.speakingExOne"></app-datatable>
+        <app-datatable *ngIf="speakingSectionTitle===speaking.speakingExTwo"  [identification]="speaking.speakingExTwo"></app-datatable>
+      </span>
+      <span *ngIf="(sectionTitle != sections.progress && writingSectionTitle !== '')">
+        <app-datatable *ngIf="writingSectionTitle===writing.integratedWriting"  [identification]="writing.integratedWriting"></app-datatable>
+        <app-datatable *ngIf="writingSectionTitle===writing.independentWriting"  [identification]="writing.independentWriting"></app-datatable>
+      </span>
     </div>
   </div>
 </div>
