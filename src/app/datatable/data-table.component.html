@@ -1,6 +1,6 @@
 <div class="mt">
-  <div class="table-container mat-elevation-z8"
-       [style.overflow-y] = "loading == true ? 'hidden' : 'scroll'">
+  <div class="table-container mat-elevation-z8">
+    <perfect-scrollbar class="scrollbar" [style.display]="loading ? 'none':''" [autoPropagation]="true">
     <table mat-table [dataSource]="passages">
 
       <!-- Number Column -->
@@ -33,10 +33,10 @@
         </td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" class="datatable-header"></tr>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: false" class="datatable-header"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="datatable-class"></tr>
     </table>
-
+    </perfect-scrollbar>
     <!--Spinner-->
     <mat-card *ngIf="loading"
               style="display: flex; justify-content: center; align-items: center; height: 100%;">
