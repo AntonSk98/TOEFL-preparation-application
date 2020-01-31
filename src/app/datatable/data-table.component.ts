@@ -21,7 +21,7 @@ export class DataTableComponent implements OnInit, OnDestroy {
   sections: Sections = new Sections();
   speaking: Speaking = new Speaking();
   writing: Writing = new Writing();
-  @ViewChild('datatable', { static: false }) datatable: DatatableComponent;
+  displayedColumns = ['N', 'Question', 'Score', 'Action'];
 
   constructor(private readingService: ReadingService, private ref: ChangeDetectorRef ) { }
 
@@ -99,7 +99,5 @@ export class DataTableComponent implements OnInit, OnDestroy {
   }
 
   resizeTable() {
-    setTimeout(() => {
-      this.datatable.recalculate(); }, 1000);
   }
 }

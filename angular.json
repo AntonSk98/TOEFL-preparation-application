@@ -25,10 +25,8 @@
               "src/assets"
             ],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "./node_modules/bootstrap/dist/css/bootstrap.css",
-              "./node_modules/@swimlane/ngx-datatable/index.css",
-              "./node_modules/@swimlane/ngx-datatable/themes/material.css",
-              "./node_modules/@swimlane/ngx-datatable/assets/icons.css",
               "./node_modules/ngx-toastr/toastr.css",
               "src/styles.css"
             ],
@@ -98,6 +96,7 @@
               "src/assets"
             ],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.css"
             ],
             "scripts": []
@@ -129,6 +128,7 @@
           }
         }
       }
-    }},
+    }
+  },
   "defaultProject": "app-toefl"
 }

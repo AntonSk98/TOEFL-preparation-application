@@ -1,0 +1,57 @@
+<div class="title ml-15px p-3">TOEFL Reading Practice {{readingNumber}}</div>
+<div class="header d-flex justify-content-between m-3">
+  <button class="btn btn-sm w-auto back" [routerLink]="'/'"><fa-icon [icon]="faBackward" class="arrow mr-1"></fa-icon>Go back</button>
+  <span>
+      <fa-icon [icon]="faClock" class="timer"></fa-icon>
+      <cd-timer #timer [startTime]="1080" format="hms" countdown="true" class="pl-2 timer"
+                (onStop)="stopTimer()"></cd-timer>
+    </span>
+</div>
+<hr>
+<div class="d-flex justify-content-center">
+  <div class="">
+    <span class="navigation" (click)="moveBack()">&#60;</span>
+    <span class="ml-2 mr-2 questions">{{questionIndex + 1}}&#47;{{readingEntity.questions.length + 1}}</span>
+    <span class="navigation" (click)="moveForward()">&#62;</span>
+  </div>
+</div>
+<div class="study-content d-flex justify-content-between m-3" style="">
+  <mat-card *ngIf="loading"
+            style="display: flex; justify-content: center; align-items: center; height: 100%; width: 100%">
+    <mat-progress-spinner
+      color="#5B5EA6"
+      mode="indeterminate">
+    </mat-progress-spinner>
+  </mat-card>
+  <perfect-scrollbar class="scrollbar" *ngIf="!loading">
+    <div class="question-side">
+      <div #question></div>
+      <div *ngIf="this.questionIndex < 8 " class="question-content mb-3 font-weight-bold">
+        {{readingEntity?.questions[questionIndex]?.question}}
+      </div>
+      <hr *ngIf="this.questionIndex < 10">
+      <div *ngIf="questionIndex<10" class="answer-choices">
+        <ul>
+          <li *ngFor="let choice of getChoicesForQuestion(questionIndex+1)">
+            <label class="container">{{choice.answerChoice}}
+              <input #checkbox type="checkbox" class="styled-checkbox" (change)="onChange(choice, checkbox.checked)" [checked]="checkSelected(choice)">
+              <span class="checkmark"></span>
+            </label>
+          </li>
+        </ul>
+      </div>
+      <div *ngIf="questionIndex===10" class="d-flex flex-column align-items-center">
+        <p>You have seen all of the questions in the reading section.</p>
+        <p>As long as there is time remaining, you can go back and check your work.</p>
+        <p>Click VIEW RESULTS to submit your answers and review your work.</p>
+        <button class="w-auto results"><span class="p-2">VIEW RESULTS</span></button>
+      </div>
+    </div>
+  </perfect-scrollbar>
+  <perfect-scrollbar class="scrollbar" [style.display]="loading ? 'none':''">
+    <div class="text-side" #studyText>
+      <!--Spinner-->
+    </div>
+  </perfect-scrollbar>
+</div>
+

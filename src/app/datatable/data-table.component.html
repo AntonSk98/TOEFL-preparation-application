@@ -1,28 +1,49 @@
 <div class="mt">
-  <ngx-datatable #datatable class="material table" [rows]="passages" [columnMode]="'force'" [headerHeight]="50"
-                 [rowHeight]="70" [scrollbarV]="true" [scrollbarH]="false" [loadingIndicator]="loading">
-    <ngx-datatable-column name="&#8470;" [resizeable]="false" [minWidth]="70" [maxWidth]="70" [sortable]="false">
-      <ng-template let-row="row" ngx-datatable-cell-template>
-        <span>#{{row.id}}</span>
-      </ng-template>
-    </ngx-datatable-column>
-    <ngx-datatable-column name="Question" [resizeable]="false" [width]="80" [sortable]="false">
-      <ng-template let-row="row" ngx-datatable-cell-template>
-        {{row.readingTitle}}
-      </ng-template>
-    </ngx-datatable-column>
-    <ngx-datatable-column name="Score" [resizeable]="false" [minWidth]="100" [maxWidth]="100" [sortable]="false">
-      <ng-template let-row="row" ngx-datatable-cell-template>
-        <span *ngIf="row.score === -1">N/A</span>
-        <span *ngIf="row.score != -1">row.score</span>
-      </ng-template>
-    </ngx-datatable-column>
-    <ngx-datatable-column name="Action" [resizeable]="false" [minWidth]="150" [maxWidth]="150" [sortable]="false">
-      <ng-template let-row="row" ngx-datatable-cell-template>
-        <button *ngIf="row.score === -1" class="btn btn-sm pr-5 mb-4 ml-3">Start</button>
-        <button *ngIf="row.score !== -1" class="btn btn-sm pr-5 mb-4 ml-3">Review</button>
-      </ng-template>
-    </ngx-datatable-column>
-  </ngx-datatable>
-</div>
+  <div class="table-container mat-elevation-z8"
+       [style.overflow-y] = "loading == true ? 'hidden' : 'scroll'">
+    <table mat-table [dataSource]="passages">
 
+      <!-- Number Column -->
+      <ng-container matColumnDef="N">
+        <th mat-header-cell *matHeaderCellDef> &#8470; </th>
+        <td mat-cell *matCellDef="let element"> #{{element.id}} </td>
+      </ng-container>
+
+      <!-- Question Column -->
+      <ng-container matColumnDef="Question">
+        <th mat-header-cell *matHeaderCellDef> Question </th>
+        <td mat-cell *matCellDef="let element"> {{element.readingTitle}} </td>
+      </ng-container>
+
+      <!-- Score Column -->
+      <ng-container matColumnDef="Score">
+        <th mat-header-cell *matHeaderCellDef> Score </th>
+        <td mat-cell *matCellDef="let element">
+          <span *ngIf="element.score == -1">N/A</span>
+          <span *ngIf="element.score != -1">{{element.score}}</span>
+        </td>
+      </ng-container>
+
+      <!-- Action Column -->
+      <ng-container matColumnDef="Action">
+        <th mat-header-cell *matHeaderCellDef> Action </th>
+        <td mat-cell *matCellDef="let element">
+          <button *ngIf="element.score == -1" class="btn btn-sm" style="font-size: 20px" [routerLink]="['/reading-task/', element.id]">Start</button>
+          <button *ngIf="element.score != -1" class="btn btn-sm" style="font-size: 20px">Review</button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" class="datatable-header"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="datatable-class"></tr>
+    </table>
+
+    <!--Spinner-->
+    <mat-card *ngIf="loading"
+              style="display: flex; justify-content: center; align-items: center; height: 100%;">
+      <mat-progress-spinner
+        color="#5B5EA6"
+        mode="indeterminate">
+      </mat-progress-spinner>
+    </mat-card>
+  </div>
+</div>

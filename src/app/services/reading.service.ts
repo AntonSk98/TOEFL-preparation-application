@@ -16,4 +16,22 @@ export class ReadingService {
       });
     }));
   }
+
+  getReadingPassageById = (id: number) => {
+    return from(new Promise( resolve => {
+      this.electronService.ipcRenderer.send('get-passage', id);
+      this.electronService.ipcRenderer.once('passage-sent', (event, result) => {
+        resolve(result[0].text);
+      });
+    }));
+  }
+
+  getReadingQuestionsByID(readingNumber: number) {
+    return from (new Promise<object>(resolve => {
+      this.electronService.ipcRenderer.send('get-questions', readingNumber);
+      this.electronService.ipcRenderer.once('questions-sent', (event, result) => {
+        resolve(result);
+      });
+    }));
+  }
 }

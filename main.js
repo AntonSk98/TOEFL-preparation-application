@@ -12,7 +12,6 @@ const connection = require('knex')({
   },
   useNullAsDefault: true
 });
-
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1366,
@@ -22,15 +21,28 @@ function createWindow() {
     }
   });
 
-  mainWindow.loadURL(
-    url.format({
-      pathname: path.join(__dirname, `/dist/index.html`),
-      protocol: "file:",
-      slashes: true
-    })
-  );
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  function loadUrl() {
+    mainWindow.loadURL(
+      url.format({
+        pathname: path.join(__dirname, `/dist/index.html`),
+        protocol: "file:",
+        slashes: true
+      })
+    );
+  }
+  // mainWindow.setMenu(null);
+  loadUrl();
+
+  mainWindow.webContents.on('did-fail-load', () => {
+    console.log('failed...')
+    loadUrl();
+  });
+  mainWindow.webContents.on('did-start-loading', () => {
+    console.log('loading...')
+  });
+  mainWindow.webContents.on('did-stop-loading', () => {
+    console.log('stop loading...')
+  });
 
   mainWindow.on('closed', function () {
     mainWindow = null
@@ -98,6 +110,45 @@ ReadingPart: {
         message: 'Error occurred while getting reading tasks'
       }))
   })
+  ipcMain.on('get-passage', async (event, id) => {
+    const result = connection('readingPractice').select('text').where({id: id});
+    await result.then( rows => {
+      mainWindow.send('passage-sent', rows);
+    })
+      .catch(err => mainWindow.send("passage-sent", {
+        status: 'error',
+        message: 'Error occurred while getting the passage'
+      }))
+  })
+  ipcMain.on('get-questions', async (event, id) => {
+    let response = {};
+    connection.transaction(transaction => {
+      connection('readingQuestions').transacting(transaction).select('id', 'question').where({readingNumber: id})
+        .then(questions => {
+          response.questions = questions;
+          return connection('answerChoiceReading').transacting(transaction).whereBetween('questionNumID', [id*10-9, id*10])
+        })
+        .then(answerChoices => {
+          response.answerChoices = answerChoices;
+          return connection('correctAnswersReading').transacting(transaction).whereBetween('questionID', [id*10-9, id*10])
+        })
+        .then(correctAnswers => {
+          response.correctAnswers = correctAnswers;
+        })
+        .then(transaction.commit)
+        .catch(transaction.rollback);
+    })
+      .then( () => {
+        mainWindow.send("questions-sent", response);
+      })
+      .catch(err => mainWindow.send("passage-sent", {
+        status: 'error',
+        message: 'Error occurred while getting the questions of the passage'
+      }))
+  })
+}
+ListeningPart: {
+
 }
 
 

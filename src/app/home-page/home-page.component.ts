@@ -4,7 +4,6 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
 import {Sections} from '../models/sections';
 import {Speaking} from '../models/speaking';
 import {Writing} from '../models/writing';
-import {DataTableComponent} from '../datatable/data-table.component';
 @Component({
   selector: 'app-home-page',
   templateUrl: './home-page.component.html',
@@ -30,7 +29,6 @@ import {DataTableComponent} from '../datatable/data-table.component';
   ]
 })
 export class HomePageComponent implements OnInit, AfterViewInit {
-  @ViewChild(DataTableComponent, {static: false}) datatableComponent;
   @Input() completeness = 50;
   @Input() targetScore = 10;
   @Input() averageScore = 100;
@@ -51,7 +49,6 @@ export class HomePageComponent implements OnInit, AfterViewInit {
 
   hideShow() {
     this.isShown = !this.isShown;
-    this.datatableComponent.resizeTable();
   }
   ngOnInit() {
   }

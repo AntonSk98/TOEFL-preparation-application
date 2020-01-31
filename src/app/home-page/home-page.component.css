@@ -33,6 +33,7 @@
   font-style: italic;
 }
 .section-name {
+  display: inline-block;
   cursor: pointer;
   color: #5b5ea6;
   font-weight: bold;
