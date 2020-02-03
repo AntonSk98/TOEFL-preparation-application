@@ -1,6 +1,9 @@
 <div class="title ml-15px p-3">TOEFL Reading Practice {{readingNumber}}</div>
 <div class="header d-flex justify-content-between m-3">
-  <button class="btn btn-sm w-auto back" [routerLink]="'/'"><fa-icon [icon]="faBackward" class="arrow mr-1"></fa-icon>Go back</button>
+  <button class="btn btn-sm w-auto back" [routerLink]="'/'">
+    <fa-icon [icon]="faBackward" class="arrow mr-1"></fa-icon>
+    Go back
+  </button>
   <span>
       <fa-icon [icon]="faClock" class="timer"></fa-icon>
       <cd-timer #timer [startTime]="1080" format="hms" countdown="true" class="pl-2 timer"
@@ -29,28 +32,54 @@
       <div *ngIf="this.questionIndex < 8 " class="question-content mb-3 font-weight-bold">
         {{readingEntity?.questions[questionIndex]?.question}}
       </div>
-      <hr *ngIf="this.questionIndex < 10">
-      <div *ngIf="questionIndex<10" class="answer-choices">
-        <ul>
-          <li *ngFor="let choice of getChoicesForQuestion(questionIndex+1)">
+      <hr *ngIf="questionIndex < 10">
+      <div *ngIf="questionIndex < 10" class="answer-choices">
+        <ul *ngIf="readingScore === -1">
+          <li *ngFor="let choice of getChoicesForQuestion(questionIndex + 1)">
             <label class="container">{{choice.answerChoice}}
-              <input #checkbox type="checkbox" class="styled-checkbox" (change)="onChange(choice, checkbox.checked)" [checked]="checkSelected(choice)">
+              <input #checkbox type="checkbox" class="styled-checkbox" (change)="onChange(choice, checkbox.checked)"
+                     [checked]="checkSelected(choice)">
               <span class="checkmark"></span>
             </label>
           </li>
         </ul>
+        <ul *ngIf="readingScore !== -1">
+          <li *ngFor="let choice of getChoicesForQuestion(questionIndex + 1)">
+            <label class="container" [style.color]="defineColorForAnswerChoice(choice)">{{choice.answerChoice}}
+              <input type="checkbox" class="styled-checkbox" [disabled]="true" [checked]="checkSelected(choice)">
+              <span class="checkmark" [style.background-color]="defineColorForAnswerChoice(choice)"></span>
+            </label>
+          </li>
+        </ul>
       </div>
-      <div *ngIf="questionIndex===10" class="d-flex flex-column align-items-center">
+      <div *ngIf="(questionIndex===10 && readingScore === -1)" class="d-flex flex-column align-items-center">
         <p>You have seen all of the questions in the reading section.</p>
         <p>As long as there is time remaining, you can go back and check your work.</p>
         <p>Click VIEW RESULTS to submit your answers and review your work.</p>
-        <button class="w-auto results"><span class="p-2">VIEW RESULTS</span></button>
+        <button class="w-auto results" (click)="viewResults()"><span class="p-2">VIEW RESULTS</span></button>
+      </div>
+      <div *ngIf="(questionIndex===10 && readingScore !== -1)" class="d-flex flex-column align-items-center">
+        <p>You have reviewed all of the questions in the reading section.</p>
+        <p>Click RETAKE TEST to take this test again</p>
+        <p>OR</p>
+        <p>Click GO BACK to close this test</p>
+        <div class="d-flex justify-content-between">
+          <button class="w-auto results mr-2" (click)="retakeTest()"><span class="p-2">RETAKE TEST</span></button>
+          <button class="w-auto results ml-2" [routerLink]="'/'"><span class="p-2">GO BACK</span></button>
+        </div>
+      </div>
+      <div *ngIf="(readingScore !== -1 && questionIndex < 10)" class="explanation d-flex flex-column">
+        <div class="explanation-title d-flex"><span class="m-3">ANSWER EXPLANATION</span></div>
+        <div *ngIf="questionIndex < 9" class="ml-3 mr-3 mt-3">Correct Answer: {{pasteCorrectAnswerLetter()}}</div>
+        <div *ngIf="questionIndex === 9" class="ml-3 mr-3 mt-3">Correct Answer: {{pasteAnswersForMultiple()}}</div>
+        <div class="ml-3 mr-3">Your Selection: {{pasteSelectedAnswerLetter()}}</div>
+        <br>
+        <div class="question-content ml-3 mr-3 mb-3">{{pasteAnswerExplanation()}}</div>
       </div>
     </div>
   </perfect-scrollbar>
   <perfect-scrollbar class="scrollbar" [style.display]="loading ? 'none':''">
     <div class="text-side" #studyText>
-      <!--Spinner-->
     </div>
   </perfect-scrollbar>
 </div>

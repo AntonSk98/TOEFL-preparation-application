@@ -28,7 +28,7 @@
       <ng-container matColumnDef="Action">
         <th mat-header-cell *matHeaderCellDef> Action </th>
         <td mat-cell *matCellDef="let element">
-          <button *ngIf="element.score == -1" class="btn btn-sm" style="font-size: 20px" [routerLink]="['/reading-task/', element.id]">Start</button>
+          <button *ngIf="element.score == -1" class="btn btn-sm" style="font-size: 20px" [routerLink]="['/reading-task/', element.id, element.score]">Start</button>
           <button *ngIf="element.score != -1" class="btn btn-sm" style="font-size: 20px">Review</button>
         </td>
       </ng-container>

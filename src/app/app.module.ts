@@ -21,7 +21,7 @@ import { PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 
 const appRoutes: Routes = [
-  { path: 'reading-task/:id', component: ReadingTaskComponent },
+  { path: 'reading-task/:id/:score', component: ReadingTaskComponent },
   {
     path: '',
     component: HomePageComponent,
