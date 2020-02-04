@@ -86,7 +86,7 @@ export class ReadingTaskComponent implements OnInit, AfterViewInit {
   }
 
   getChoicesForQuestion(questionNumber: number) {
-    return this.readingEntity.answerChoices.filter(value => value.questionNumID === questionNumber);
+    return this.readingEntity.answerChoices.filter(value => value.questionNumID === this.readingNumber * 10 - (10 - questionNumber));
   }
 
   onChange(choice: AnswerChoice, checked: boolean) {
@@ -273,6 +273,8 @@ export class ReadingTaskComponent implements OnInit, AfterViewInit {
   }
 
   calculateLetterForSingularQuestions(questionNumber: number): string {
+    const shift = (this.readingNumber - 1) * 2;
+    questionNumber = questionNumber - shift;
     let counter = 0;
     while (true) {
       if (counter % 4 === 0 && counter >= questionNumber) {

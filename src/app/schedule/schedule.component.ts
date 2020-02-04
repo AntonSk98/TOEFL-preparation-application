@@ -5,6 +5,7 @@ import {TargetService} from '../services/target.service';
 import {TargetSettings} from '../models/targetSettings';
 import {AverageProgress} from '../models/averageProgress';
 import {NotificationService} from "../services/notification.service";
+import {ReadingService} from "../services/reading.service";
 
 @Component({
   selector: 'app-schedule',
@@ -29,7 +30,9 @@ export class ScheduleComponent implements OnInit, OnDestroy {
   constructor(
     private targetService: TargetService, private ref: ChangeDetectorRef,
     private parserFormatter: NgbDateParserFormatter,
-    private notificationService: NotificationService) {
+    private notificationService: NotificationService,
+    private readingService: ReadingService,
+  ) {
   }
 
   ngOnInit() {
@@ -39,6 +42,7 @@ export class ScheduleComponent implements OnInit, OnDestroy {
       this.dayRemained = this.calculateRemainedDays(this.today, this.testDate);
       this.countSumTargetScore();
     });
+    this.readingService.getAverageScore().subscribe( (value: number) => this.averageProgress.averageReading = value);
   }
   convertDateToNGBDATE(testDate: string): NgbDateStruct {
     const date = new Date(testDate);
