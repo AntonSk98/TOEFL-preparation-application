@@ -39,10 +39,29 @@
         <ngb-progressbar [type]="defineTypeOfProgressBar()" textType="white" [value]="completeness" height=15px></ngb-progressbar>
       </div>
       <div class="completeness analysis" [style.visibility] = "sectionTitle == sections.progress ? 'hidden' : ''">
-        <div>Target Score: <span class="text-success">{{targetScore}}</span></div>
+        <div>Target Score:
+          <span *ngIf="sectionTitle==sections.reading" class="text-success">{{targetScore.targetReadingScore}}</span>
+          <span *ngIf="sectionTitle==sections.listening" class="text-success">{{targetScore.targetListeningScore}}</span>
+          <span *ngIf="sectionTitle==sections.speaking" class="text-success">{{targetScore.targetSpeakingScore}}</span>
+          <span *ngIf="sectionTitle==sections.writing" class="text-success">{{targetScore.targetWritingScore}}</span>
+        </div>
         <div>Average Score:
-          <span *ngIf="averageScore>=targetScore" class="text-success">{{averageScore}}</span>
-          <span *ngIf="averageScore<targetScore" class="text-danger">{{averageScore}}</span>
+          <span *ngIf="(sectionTitle==sections.reading && averageScore.averageReadingScore>=targetScore.targetReadingScore)"
+                class="text-success">{{averageScore.averageReadingScore}}</span>
+          <span *ngIf="(sectionTitle==sections.reading && averageScore.averageReadingScore<targetScore.targetReadingScore)"
+                class="text-danger">{{averageScore.averageReadingScore}}</span>
+          <span *ngIf="(sectionTitle==sections.listening && averageScore.averageListeningScore>=targetScore.targetListeningScore)"
+                class="text-success">{{averageScore.averageListeningScore}}</span>
+          <span *ngIf="(sectionTitle==sections.listening && averageScore.averageListeningScore<targetScore.targetListeningScore)"
+                class="text-danger">{{averageScore.averageListeningScore}}</span>
+          <span *ngIf="(sectionTitle==sections.speaking && averageScore.averageSpeakingScore>=targetScore.targetSpeakingScore)"
+                class="text-success">{{averageScore.averageSpeakingScore}}</span>
+          <span *ngIf="(sectionTitle==sections.speaking && averageScore.averageSpeakingScore<targetScore.targetSpeakingScore)"
+                class="text-danger">{{averageScore.averageSpeakingScore}}</span>
+          <span *ngIf="(sectionTitle==sections.writing && averageScore.averageWritingScore>=targetScore.targetWritingScore)"
+                class="text-success">{{averageScore.averageWritingScore}}</span>
+          <span *ngIf="(sectionTitle==sections.writing && averageScore.averageWritingScore<targetScore.targetWritingScore)"
+                class="text-danger">{{averageScore.averageWritingScore}}</span>
         </div>
       </div>
     </div>
@@ -88,7 +107,7 @@
           Independent writing
         </div>
       </div>
-      <app-schedule *ngIf="sectionTitle == sections.progress"></app-schedule>
+      <app-schedule *ngIf="sectionTitle == sections.progress" (emitTargetScore)="getTargetScore($event)"></app-schedule>
       <span *ngIf="(sectionTitle != sections.progress && speakingSectionTitle === '' && writingSectionTitle === '')">
         <app-datatable *ngIf="sectionTitle===sections.reading"  [identification]="sections.reading"></app-datatable>
         <app-datatable *ngIf="sectionTitle===sections.listening"  [identification]="sections.listening"></app-datatable>

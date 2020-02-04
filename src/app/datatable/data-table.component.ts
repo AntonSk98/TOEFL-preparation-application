@@ -97,7 +97,4 @@ export class DataTableComponent implements OnInit, OnDestroy {
   private getSpeakingExTwoTasks() {
     console.log(this.speaking.speakingExTwo);
   }
-
-  resizeTable() {
-  }
 }

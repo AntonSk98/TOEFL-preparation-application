@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
 import {faCalendar, faEdit, faQuestionCircle} from '@fortawesome/free-solid-svg-icons';
 import {NgbDate, NgbDateParserFormatter, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 import {TargetService} from '../services/target.service';
@@ -12,6 +12,7 @@ import {NotificationService} from "../services/notification.service";
   styleUrls: ['./schedule.component.css']
 })
 export class ScheduleComponent implements OnInit, OnDestroy {
+  @Output() emitTargetScore = new EventEmitter();
   targetScore = 'The target scores must range from 0 to 30';
   averageScore = 'The score averages are out of 30';
   isEdited = false;
@@ -83,6 +84,7 @@ export class ScheduleComponent implements OnInit, OnDestroy {
     this.targetService.updateToeflScore(this.targetSettings).subscribe(value => {
       this.notificationService.showMessage(value);
     });
+    this.emitTargetScore.emit(this.targetSettings);
   }
 
   changeEdited() {

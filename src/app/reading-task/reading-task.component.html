@@ -4,11 +4,12 @@
     <fa-icon [icon]="faBackward" class="arrow mr-1"></fa-icon>
     Go back
   </button>
-  <span>
-      <fa-icon [icon]="faClock" class="timer"></fa-icon>
-      <cd-timer #timer [startTime]="1080" format="hms" countdown="true" class="pl-2 timer"
-                (onStop)="stopTimer()"></cd-timer>
-    </span>
+  <span *ngIf="readingScore === -1">
+		<fa-icon [icon]="faClock" class="timer"></fa-icon>
+		<cd-timer #timer [startTime]="1080" format="hms" countdown="true" class="pl-2 timer"
+              (onStop)="stopTimer()"></cd-timer>
+	</span>
+  <span *ngIf="readingScore !== -1" class="font-weight-bold">Your score: {{readingScore}}/{{this.readingEntity.questions.length + 1}}</span>
 </div>
 <hr>
 <div class="d-flex justify-content-center">
@@ -23,8 +24,7 @@
             style="display: flex; justify-content: center; align-items: center; height: 100%; width: 100%">
     <mat-progress-spinner
       color="#5B5EA6"
-      mode="indeterminate">
-    </mat-progress-spinner>
+      mode="indeterminate"></mat-progress-spinner>
   </mat-card>
   <perfect-scrollbar class="scrollbar" *ngIf="!loading">
     <div class="question-side">
@@ -56,31 +56,36 @@
         <p>You have seen all of the questions in the reading section.</p>
         <p>As long as there is time remaining, you can go back and check your work.</p>
         <p>Click VIEW RESULTS to submit your answers and review your work.</p>
-        <button class="w-auto results" (click)="viewResults()"><span class="p-2">VIEW RESULTS</span></button>
+        <button class="w-auto results" (click)="viewResults()">
+          <span class="p-2">VIEW RESULTS</span>
+        </button>
       </div>
       <div *ngIf="(questionIndex===10 && readingScore !== -1)" class="d-flex flex-column align-items-center">
         <p>You have reviewed all of the questions in the reading section.</p>
-        <p>Click RETAKE TEST to take this test again</p>
-        <p>OR</p>
         <p>Click GO BACK to close this test</p>
         <div class="d-flex justify-content-between">
-          <button class="w-auto results mr-2" (click)="retakeTest()"><span class="p-2">RETAKE TEST</span></button>
-          <button class="w-auto results ml-2" [routerLink]="'/'"><span class="p-2">GO BACK</span></button>
+          <button class="w-auto results ml-2" [routerLink]="'/'">
+            <span class="p-2">GO BACK</span>
+          </button>
         </div>
       </div>
       <div *ngIf="(readingScore !== -1 && questionIndex < 10)" class="explanation d-flex flex-column">
-        <div class="explanation-title d-flex"><span class="m-3">ANSWER EXPLANATION</span></div>
-        <div *ngIf="questionIndex < 9" class="ml-3 mr-3 mt-3">Correct Answer: {{pasteCorrectAnswerLetter()}}</div>
-        <div *ngIf="questionIndex === 9" class="ml-3 mr-3 mt-3">Correct Answer: {{pasteAnswersForMultiple()}}</div>
-        <div class="ml-3 mr-3">Your Selection: {{pasteSelectedAnswerLetter()}}</div>
+        <div class="explanation-title d-flex">
+          <span class="m-3">ANSWER EXPLANATION</span>
+        </div>
+        <div *ngIf="questionIndex < 9" class="ml-3 mr-3 mt-3">Correct Answer: {{pasteCorrectAnswerLetter()}}
+        </div>
+        <div *ngIf="questionIndex === 9" class="ml-3 mr-3 mt-3">Correct Answer: {{pasteCorrectAnswersForMultiple()}}</div>
+        <div *ngIf="questionIndex < 9" class="ml-3 mr-3">Your Selection: {{pasteSelectedAnswerLetter()}}
+        </div>
+        <div *ngIf="questionIndex === 9" class="ml-3 mr-3">Your Selection: {{pasteSelectedAnswersForMultiple()}}</div>
         <br>
         <div class="question-content ml-3 mr-3 mb-3">{{pasteAnswerExplanation()}}</div>
       </div>
     </div>
   </perfect-scrollbar>
   <perfect-scrollbar class="scrollbar" [style.display]="loading ? 'none':''">
-    <div class="text-side" #studyText>
-    </div>
+    <div class="text-side" #studyText></div>
   </perfect-scrollbar>
 </div>
 

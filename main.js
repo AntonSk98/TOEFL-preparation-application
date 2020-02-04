@@ -146,6 +146,66 @@ ReadingPart: {
         message: 'Error occurred while getting the questions of the passage'
       }))
   })
+
+  ipcMain.on('update-score', async (event, id, score) => {
+    const result = connection('readingPractice').where({id: id}).update({score: score});
+    await result.then( () => {
+      mainWindow.send('reading-sent', 'Score updated successfully');
+    })
+      .catch(err => mainWindow.send("score-updated", {
+        status: 'error',
+        message: 'Error occurred while getting reading tasks'
+      }))
+  })
+
+  ipcMain.on('get-completeness', async () => {
+    let completed = 0;
+    let nonCompleted = 0;
+    await connection.transaction(transaction => {
+      connection('readingPractice').transacting(transaction).count().where('score', '>', -1)
+        .then(completedCount => {
+          completed = Object.values(completedCount[0])[0];
+          return connection('readingPractice').transacting(transaction).count('score')
+        })
+        .then(nonCompletedCount => {
+          nonCompleted = Object.values(nonCompletedCount[0])[0];
+        })
+        .then(transaction.commit)
+        .catch(transaction.rollback);
+    })
+      .then(() => mainWindow.send('completeness-sent', Math.round((completed/nonCompleted * 100) * 10) / 10))
+      .catch(err => mainWindow.send('completeness-sent', 'Error occurred while getting completeness info'))
+  })
+
+  ipcMain.on('get-target-score', async () => {
+    const result = connection('targetTable').select('targetReading').first();
+    await result.then( (targetScore) => {
+      mainWindow.send('target-score-sent', targetScore.targetReading);
+    })
+      .catch(err => mainWindow.send("target-score-sent", {
+        status: 'error',
+        message: 'Error occurred while getting targetScore'
+      }))
+  })
+
+  ipcMain.on('get-average-score', async () => {
+    let averageScore = 0;
+    let numberOfRows = 0;
+    await connection.transaction(transaction => {
+      connection('readingPractice').transacting(transaction).count().where('score', '>', -1)
+        .then(allCount => {
+          numberOfRows = Object.values(allCount[0])[0];
+          return connection('readingPractice').transacting(transaction).select('score').where('score', '>', -1)
+        })
+        .then(completedPassages => {
+          averageScore = Object.values(completedPassages).reduce((sum,value) => sum + value.score, 0) / numberOfRows;
+        })
+        .then(transaction.commit)
+        .catch(transaction.rollback);
+    })
+      .then(() => mainWindow.send('average-score-sent', Math.round((averageScore/100*30))))
+      .catch(err => mainWindow.send('average-score-sent', 'Error occurred while getting average score'))
+  })
 }
 ListeningPart: {
 

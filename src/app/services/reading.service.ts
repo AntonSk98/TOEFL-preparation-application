@@ -34,4 +34,40 @@ export class ReadingService {
       });
     }));
   }
+
+  updateReadingScoreByID(readingNumber: number, readingScore: number) {
+    return from (new Promise(resolve => {
+      this.electronService.ipcRenderer.send('update-score', readingNumber, readingScore);
+      this.electronService.ipcRenderer.once('score-updated', (event, result) => {
+        resolve(result);
+      });
+    }));
+  }
+
+  getCompleteness() {
+    return from (new Promise(resolve => {
+      this.electronService.ipcRenderer.send('get-completeness');
+      this.electronService.ipcRenderer.once('completeness-sent', (event, result) => {
+        resolve(result);
+      });
+    }));
+  }
+
+  getTargetScore() {
+    return from (new Promise(resolve => {
+      this.electronService.ipcRenderer.send('get-target-score');
+      this.electronService.ipcRenderer.once('target-score-sent', (event, result) => {
+        resolve(result);
+      });
+    }));
+  }
+
+  getAverageScore() {
+    return from (new Promise(resolve => {
+      this.electronService.ipcRenderer.send('get-average-score');
+      this.electronService.ipcRenderer.once('average-score-sent', (event, result) => {
+        resolve(result);
+      });
+    }));
+  }
 }

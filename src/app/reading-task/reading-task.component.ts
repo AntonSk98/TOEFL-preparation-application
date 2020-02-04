@@ -1,9 +1,9 @@
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {faArrowLeft, faClock} from '@fortawesome/free-solid-svg-icons';
-import {CdTimerComponent} from 'angular-cd-timer';
-import {ReadingService} from '../services/reading.service';
-import {AnswerChoice, CorrectAnswer, ReadingEntity} from '../models/readingEntity';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { faArrowLeft, faClock } from '@fortawesome/free-solid-svg-icons';
+import { CdTimerComponent } from 'angular-cd-timer';
+import { ReadingService } from '../services/reading.service';
+import { AnswerChoice, CorrectAnswer, ReadingEntity } from '../models/readingEntity';
 
 @Component({
   selector: 'app-reading-task',
@@ -11,28 +11,32 @@ import {AnswerChoice, CorrectAnswer, ReadingEntity} from '../models/readingEntit
   styleUrls: ['./reading-task.component.css']
 })
 export class ReadingTaskComponent implements OnInit, AfterViewInit {
-  @ViewChild('timer', {static: false}) timer: CdTimerComponent;
-  @ViewChild('studyText', {static: false}) studyText: ElementRef;
-  @ViewChild('question', {static: false}) question: ElementRef;
+  @ViewChild('timer', {
+    static: false
+  }) timer: CdTimerComponent;
+  @ViewChild('studyText', {
+    static: false
+  }) studyText: ElementRef;
+  @ViewChild('question', {
+    static: false
+  }) question: ElementRef;
   readingNumber: number;
-  readingScore: number;
   faClock = faClock;
   faBackward = faArrowLeft;
   passage: string;
   loading = true;
   readingEntity: ReadingEntity = new ReadingEntity();
   questionIndex = 0;
+  readingScore = -1;
   selectedChoices: AnswerChoice[] = [];
   correctAnswers: UserAnswer[] = [];
 
   constructor(
     private route: ActivatedRoute,
     private readingService: ReadingService
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
-    this.readingScore = Number(this.route.snapshot.params.score);
     this.readingNumber = this.route.snapshot.params.id;
     this.readingService.getReadingQuestionsByID(this.readingNumber).subscribe((value: ReadingEntity) => this.readingEntity = value);
   }
@@ -94,10 +98,10 @@ export class ReadingTaskComponent implements OnInit, AfterViewInit {
   }
 
   manipulateBySingleChoices(choice: AnswerChoice, checked: boolean) {
-    if (this.selectedChoices.filter((value: AnswerChoice) => value.answerChoice === choice.answerChoice
-      || value.questionNumID === choice.questionNumID).length !== 0) {
-      const index = this.selectedChoices.findIndex((value: AnswerChoice) => value.answerChoice === choice.answerChoice
-        || value.questionNumID === choice.questionNumID);
+    if (this.selectedChoices.filter((value: AnswerChoice) => value.answerChoice === choice.answerChoice ||
+      value.questionNumID === choice.questionNumID).length !== 0) {
+      const index = this.selectedChoices.findIndex((value: AnswerChoice) => value.answerChoice === choice.answerChoice ||
+        value.questionNumID === choice.questionNumID);
       checked === true ? this.selectedChoices[index] = choice : this.selectedChoices.splice(index, 1);
     } else {
       this.selectedChoices.push(choice);
@@ -121,13 +125,16 @@ export class ReadingTaskComponent implements OnInit, AfterViewInit {
   checkSelected(choice: AnswerChoice): boolean {
     if (this.selectedChoices.length > 0) {
       return !!(this.selectedChoices.find(value => value.answerChoice === choice.answerChoice));
-    } else { return false; }
+    } else {
+      return false;
+    }
   }
 
   viewResults() {
-    this.composeResultArray();
-    this.readingScore = 12;
+    this.readingScore = this.composeResultArray();
     this.questionIndex = 0;
+    const readingScoreInPercent = Math.round((this.readingScore / (this.readingEntity.questions.length + 1) * 100) * 100) / 100;
+    this.readingService.updateReadingScoreByID(this.readingNumber, readingScoreInPercent).subscribe();
   }
 
   composeResultArray(): number {
@@ -142,8 +149,8 @@ export class ReadingTaskComponent implements OnInit, AfterViewInit {
           score += this.incrementScoreForSingularChoice(correctAnswer, answerChoice);
         } else {
           if (this.selectedChoices.filter(value => value.questionNumID === this.readingNumber * 10).length <= 3) {
-            if (answerChoice.questionNumID === correctAnswer.questionID
-              && answerChoice.id === correctAnswer.answerID) {
+            if (answerChoice.questionNumID === correctAnswer.questionID &&
+              answerChoice.id === correctAnswer.answerID) {
               multipleAnswers.push(this.setCorrectAnswer(correctAnswer, answerChoice));
               scoreForMultipleQuestion++;
             } else if (answerChoice.questionNumID === correctAnswer.questionID) {
@@ -153,8 +160,12 @@ export class ReadingTaskComponent implements OnInit, AfterViewInit {
         }
       });
     });
-    if (scoreForMultipleQuestion === 3) {score = score + 2; }
-    if (scoreForMultipleQuestion === 2) {score = score + 1; }
+    if (scoreForMultipleQuestion === 3) {
+      score = score + 2;
+    }
+    if (scoreForMultipleQuestion === 2) {
+      score = score + 1;
+    }
     this.correctAnswers.push(...this.filterMultipleChoices(multipleAnswers));
     return score;
   }
@@ -210,50 +221,18 @@ export class ReadingTaskComponent implements OnInit, AfterViewInit {
       return '#EB2124';
     } else if (this.readingEntity.correctAnswers.findIndex(value => value.answerID === choice.id) !== -1) {
       return '#5B5EA6';
-    } else { return ''; }
-  }
-
-  retakeTest() {
-
-  }
-
-  calculateLetter(questionNumber: number): string {
-    let counter = 0;
-    if (questionNumber % 4 === 0) {return 'D'; }
-    while (true) {
-      if (counter % 4 === 0 && counter > questionNumber) {break; }
-      counter++;
+    } else {
+      return '';
     }
-    if (counter === questionNumber) {
-        return 'D';
-      }
-    if (counter - 1 === questionNumber) {
-        return 'C';
-      }
-    if (counter - 2 === questionNumber) {
-        return 'B';
-      }
-    if (counter - 3 === questionNumber) {
-        return 'A';
-      }
   }
 
   pasteCorrectAnswerLetter(): string {
     const questionNumID = 10 * (this.readingNumber - 1) + this.questionIndex + 1;
     const correctAnswerID = this.readingEntity.correctAnswers.find(value => value.questionID === questionNumID).answerID;
-    return this.calculateLetter(correctAnswerID);
+    return this.calculateLetterForSingularQuestions(correctAnswerID);
   }
 
-  pasteSelectedAnswerLetter(): string {
-    return 'B';
-  }
-
-  pasteAnswerExplanation(): string {
-    const questionNumID = 10 * (this.readingNumber - 1) + this.questionIndex + 1;
-    return this.readingEntity.correctAnswers.find(value => value.questionID === questionNumID).explanation;
-  }
-
-  pasteAnswersForMultiple() {
+  pasteCorrectAnswersForMultiple() {
     let correctAnswers = '';
     const lastNumber = 10 * this.readingNumber;
     const result = this.readingEntity.correctAnswers.filter(value => value.questionID === lastNumber);
@@ -263,6 +242,57 @@ export class ReadingTaskComponent implements OnInit, AfterViewInit {
     });
     return correctAnswers;
   }
+
+  pasteSelectedAnswerLetter(): string {
+    const questionNumID = 10 * (this.readingNumber - 1) + this.questionIndex + 1;
+    const correctAnswerID = this.selectedChoices.find(value => value.questionNumID === questionNumID);
+    if (correctAnswerID) {
+      return this.calculateLetterForSingularQuestions(correctAnswerID.id);
+    } else {
+      return 'Not Answered';
+    }
+  }
+
+  pasteSelectedAnswersForMultiple() {
+    let selectedAnswers = '';
+    const lastNumber = 10 * this.readingNumber;
+    const selectedChoices = this.selectedChoices.filter(value => value.questionNumID === lastNumber);
+    if (selectedChoices.length) {
+      selectedChoices.forEach(value => {
+        selectedAnswers = selectedAnswers + value.answerChoice.slice(0, 1);
+      });
+      return selectedAnswers;
+    } else {
+      return 'Not Answered';
+    }
+  }
+
+  pasteAnswerExplanation(): string {
+    const questionNumID = 10 * (this.readingNumber - 1) + this.questionIndex + 1;
+    return this.readingEntity.correctAnswers.find(value => value.questionID === questionNumID).explanation;
+  }
+
+  calculateLetterForSingularQuestions(questionNumber: number): string {
+    let counter = 0;
+    while (true) {
+      if (counter % 4 === 0 && counter >= questionNumber) {
+        break;
+      }
+      counter++;
+    }
+    if (counter === questionNumber) {
+      return 'D';
+    }
+    if (counter - 1 === questionNumber) {
+      return 'C';
+    }
+    if (counter - 2 === questionNumber) {
+      return 'B';
+    }
+    if (counter - 3 === questionNumber) {
+      return 'A';
+    }
+  }
 }
 
 class UserAnswer {
@@ -270,6 +300,7 @@ class UserAnswer {
   questionNumID: number;
   answerChoice: string;
   isCorrect: boolean;
+
   constructor(id: number, questionNumID: number, answerChoice: string, isCorrect: boolean) {
     this.id = id;
     this.questionNumID = questionNumID;
@@ -277,5 +308,3 @@ class UserAnswer {
     this.isCorrect = isCorrect;
   }
 }
-
-
