@@ -1,0 +1,27 @@
+<div class="title ml-15px p-3">TOEFL Listening Practice {{listeningNumber}}</div>
+<div class="header d-flex justify-content-between m-3">
+  <button class="btn btn-sm w-auto back" [routerLink]="'/'">
+    <fa-icon [icon]="faBackward" class="arrow mr-1"></fa-icon>
+    Go back
+  </button>
+  <span *ngIf="listeningScore === -1">
+		<fa-icon [icon]="faClock" class="timer"></fa-icon>
+		<cd-timer #timer [startTime]="210" format="hms" countdown="true" class="pl-2 timer" (onTick)="stopTimer()"
+              (onComplete)="completeTimer()"></cd-timer>
+	</span>
+  <span *ngIf="listeningScore !== -1" class="font-weight-bold">Your score: {{listeningScore}}/2</span>
+</div>
+<hr>
+<div *ngIf="showDirections" class="directions">
+  <p>In this question, you'll listen to a {{listeningType}}, then answer questions related to that lecture. Answer the questions based on what is stated or implied by the speakers.</p>
+  <p>You may take notes while you listen. You may use your notes to help you answer the questions.</p>
+  <p>We recommend you practice taking notes with a pen and paper like you will during your TOEFL exam.</p>
+  <button class="w-auto start-task" (click)="startTask()">
+    <span class="p-2">START</span>
+  </button>
+</div>
+<div *ngIf="isAudioPlaying" class="playing">
+  <div class="listening-title mb-2">{{pasteTodayTopic()}}</div>
+  <img *ngIf="listeningType === 'lecture'" src="./lecture.jpg" class="w-100 task-image" alt="">
+  <img *ngIf="listeningType !== 'lecture'" src="./conversation.jpg" class="w-100 task-image" alt="">
+</div>

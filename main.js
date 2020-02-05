@@ -101,7 +101,7 @@ TargetScore: {
 
 ReadingPart: {
   ipcMain.on('get-reading', async () => {
-    const result = connection('readingPractice').select('id').select('readingTitle').select('score');
+    const result = connection('readingPractice').select('id').select('title').select('score');
     await result.then( rows => {
       mainWindow.send('reading-sent', rows);
     })
@@ -208,7 +208,16 @@ ReadingPart: {
   })
 }
 ListeningPart: {
-
+  ipcMain.on('get-listening', async () => {
+    const result = connection('listeningPractice').select('id').select('title').select('score').select('type');
+    await result.then( rows => {
+      mainWindow.send('listening-sent', rows);
+    })
+      .catch(err => mainWindow.send("listening-sent", {
+        status: 'error',
+        message: 'Error occurred while getting listening tasks'
+      }))
+  })
 }
 
 

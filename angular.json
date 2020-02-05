@@ -22,6 +22,8 @@
             "assets": [
               "src/favicon.ico",
               "src/logo.png",
+              "src/conversation.jpg",
+              "src/lecture.jpg",
               "src/assets"
             ],
             "styles": [

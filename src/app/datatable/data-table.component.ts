@@ -6,6 +6,7 @@ import {Sections} from '../models/sections';
 import {Speaking} from '../models/speaking';
 import {Writing} from '../models/writing';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
+import {ListeningService} from '../services/listening.service';
 
 @Component({
   selector: 'app-datatable',
@@ -16,25 +17,21 @@ import { DatatableComponent } from '@swimlane/ngx-datatable';
 export class DataTableComponent implements OnInit, OnDestroy {
   @Input() identification: string;
   loading: boolean;
-  passages: ReadingPractice[];
+  topics = [];
   readingSubscription = new Subscription();
+  listeningSubscription = new Subscription();
   sections: Sections = new Sections();
   speaking: Speaking = new Speaking();
   writing: Writing = new Writing();
   displayedColumns = ['N', 'Question', 'Score', 'Action'];
 
-  constructor(private readingService: ReadingService, private ref: ChangeDetectorRef ) { }
+  constructor(
+    private readingService: ReadingService,
+    private listeningService: ListeningService
+  ) { }
 
   ngOnInit() {
     this.taskResolver(this.identification);
-  }
-
-  getReadingTasks = () => {
-    this.loading = true;
-    this. readingSubscription = this.readingService.getReadingTasks().subscribe((value: ReadingPractice[]) => {
-      this.loading = false;
-      this.passages = value;
-    });
   }
 
   taskResolver = (identification: string) => {
@@ -56,10 +53,23 @@ export class DataTableComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.readingSubscription.unsubscribe();
+    this.listeningSubscription.unsubscribe();
+  }
+
+  getReadingTasks = () => {
+    this.loading = true;
+    this. readingSubscription = this.readingService.getReadingTasks().subscribe((value: any) => {
+      this.loading = false;
+      this.topics = value;
+    });
   }
 
   private getListeningTasks() {
-    console.log(this.sections.listening);
+    this.loading = true;
+    this.listeningSubscription = this.listeningService.getListeningTasks().subscribe((value: any) => {
+      this.loading = false;
+      this.topics = value;
+    });
   }
 
   private getSpeakingTasks() {
