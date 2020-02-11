@@ -218,6 +218,80 @@ ListeningPart: {
         message: 'Error occurred while getting listening tasks'
       }))
   })
+  ipcMain.on('get-listening-entity', async (event, listeningNumber) => {
+    let response = {};
+    connection.transaction(transaction => {
+      connection('listeningQuestions').transacting(transaction).select('id', 'question', 'audioPath').where({listeningNumber: listeningNumber})
+        .then(listeningQuestions => {
+          response.listeningQuestions = listeningQuestions;
+          return connection('answerChoiceListening').transacting(transaction).select('id', 'answerChoice', 'questionNumID').where({listeningNumber: listeningNumber})
+        })
+        .then(answerChoiceListening => {
+          response.answerChoiceListening = answerChoiceListening;
+          return connection('correctAnswersListening').transacting(transaction).select('questionID', 'answerID', 'explanation').where({listeningNumber: listeningNumber})
+        })
+        .then(correctAnswersListening => {
+          response.correctAnswersListening = correctAnswersListening;
+        })
+        .then(transaction.commit)
+        .catch(transaction.rollback);
+    })
+      .then( () => {
+        mainWindow.send("listening-entity-sent", response);
+      })
+      .catch(err => mainWindow.send("listening-entity-sent", {
+        status: 'error',
+        message: 'Error occurred while getting the questions of current listening test'
+      }))
+  })
+  ipcMain.on('update-listening-score', async (event, id, score) => {
+    const result = connection('listeningPractice').where({id: id}).update({score: score});
+    await result.then( () => {
+      mainWindow.send('listening-score-updated', 'Score updated successfully');
+    })
+      .catch(err => mainWindow.send("listening-score-updated", {
+        status: 'error',
+        message: 'Error occurred while updating listening score'
+      }))
+  })
+
+  ipcMain.on('get-listening-completeness', async () => {
+    let completed = 0;
+    let nonCompleted = 0;
+    await connection.transaction(transaction => {
+      connection('listeningPractice').transacting(transaction).count().where('score', '>', -1)
+        .then(completedCount => {
+          completed = Object.values(completedCount[0])[0];
+          return connection('listeningPractice').transacting(transaction).count('score')
+        })
+        .then(nonCompletedCount => {
+          nonCompleted = Object.values(nonCompletedCount[0])[0];
+        })
+        .then(transaction.commit)
+        .catch(transaction.rollback);
+    })
+      .then(() => mainWindow.send('listening-completeness-sent', Math.round((completed/nonCompleted * 100) * 10) / 10))
+      .catch(err => mainWindow.send('listening-completeness-sent', 'Error occurred while getting completeness info'))
+  })
+
+  ipcMain.on('get-listening-average-score', async () => {
+    let averageScore = 0;
+    let numberOfRows = 0;
+    await connection.transaction(transaction => {
+      connection('listeningPractice').transacting(transaction).count().where('score', '>', -1)
+        .then(allCount => {
+          numberOfRows = Object.values(allCount[0])[0];
+          return connection('listeningPractice').transacting(transaction).select('score').where('score', '>', -1)
+        })
+        .then(completedTasks => {
+          averageScore = Object.values(completedTasks).reduce((sum,value) => sum + value.score, 0) / numberOfRows;
+        })
+        .then(transaction.commit)
+        .catch(transaction.rollback);
+    })
+      .then(() => mainWindow.send('listening-average-score-sent', Math.round((averageScore/100*30))))
+      .catch(err => mainWindow.send('listening-average-score-sent', 'Error occurred while getting average score'))
+  })
 }
 
 
