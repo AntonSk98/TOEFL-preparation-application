@@ -7,6 +7,7 @@ import {Writing} from '../models/writing';
 import {ReadingService} from '../services/reading.service';
 import {TargetSettings} from '../models/targetSettings';
 import {TargetService} from '../services/target.service';
+import {ListeningService} from '../services/listening.service';
 @Component({
   selector: 'app-home-page',
   templateUrl: './home-page.component.html',
@@ -35,7 +36,7 @@ export class HomePageComponent implements OnInit, AfterViewInit {
   @Input() completeness: number;
   @Input() targetScore = new TargetScore();
   @Input() averageScore = new AverageScore();
-  sectionTitle: string;
+  sectionTitle = 'Reading';
   speakingSectionTitle = '';
   writingSectionTitle = '';
   faTrash = faTrash;
@@ -46,9 +47,9 @@ export class HomePageComponent implements OnInit, AfterViewInit {
   writing: Writing = new Writing();
   isShown = true;
   constructor(
+    private listeningService: ListeningService,
     private readingService: ReadingService,
     private targetService: TargetService) {
-    this.sectionTitle = 'Reading';
   }
 
   hideShow() {
@@ -60,6 +61,12 @@ export class HomePageComponent implements OnInit, AfterViewInit {
 
   adjustTitle(clickedSection: string) {
     this.sectionTitle = clickedSection;
+    if (clickedSection === this.sections.reading) {
+      this.readingService.getCompleteness().subscribe((value: number) => this.completeness = value);
+    }
+    if (clickedSection === this.sections.listening) {
+      this.listeningService.getCompleteness().subscribe((value: number) => this.completeness = value);
+    }
     if (clickedSection === this.sections.writing) {
       this.writingSectionTitle = 'Integrated writing';
       this.speakingSectionTitle = '';
@@ -91,16 +98,15 @@ export class HomePageComponent implements OnInit, AfterViewInit {
   }
 
   getProgressInfo() {
+    this.readingService.getCompleteness().subscribe((value: number) => this.completeness = value);
     this.targetService.getTargetScore().subscribe((value: TargetSettings) => {
       this.targetScore.targetReadingScore = value.targetReading;
       this.targetScore.targetListeningScore = value.targetListening;
       this.targetScore.targetSpeakingScore = value.targetSpeaking;
       this.targetScore.targetWritingScore = value.targetWriting;
     });
-    if (this.sectionTitle === this.sections.reading) {
-      this.readingService.getCompleteness().subscribe((value: number) => this.completeness = value);
-      this.readingService.getAverageScore().subscribe((value: number) => this.averageScore.averageReadingScore = value );
-    }
+    this.readingService.getAverageScore().subscribe((value: number) => this.averageScore.averageReadingScore = value );
+    this.listeningService.getAverageScore().subscribe((value: number) => this.averageScore.averageListeningScore = value );
   }
 
   ngAfterViewInit(): void {

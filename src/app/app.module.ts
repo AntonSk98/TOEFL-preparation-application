@@ -20,6 +20,8 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { ListeningTaskComponent } from './listening-task/listening-task.component';
+import {NgxAudioPlayerModule} from "ngx-audio-player";
+import {APP_BASE_HREF} from "@angular/common";
 
 const appRoutes: Routes = [
   { path: 'reading-task/:id', component: ReadingTaskComponent },
@@ -55,11 +57,13 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     ToastrModule.forRoot(),
     MatCardModule,
     MatProgressSpinnerModule,
-    RouterModule.forRoot(appRoutes),
+    RouterModule.forRoot(appRoutes, { useHash: true }),
     CdTimerModule,
-    PerfectScrollbarModule
+    PerfectScrollbarModule,
+    NgxAudioPlayerModule
   ],
   providers: [
+    { provide: APP_BASE_HREF, useValue: '/' },
     ElectronService,
     {
       provide: PERFECT_SCROLLBAR_CONFIG,
