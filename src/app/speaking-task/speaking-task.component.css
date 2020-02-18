@@ -1,0 +1,44 @@
+.title {
+  background-color: #5B5EA6;
+  color: white;
+  font-size: 30px;
+  font-style: italic;
+}
+
+.reading-block, .listening-block {
+  user-select: none;
+  border-bottom: #5b5ea6 3px solid;
+  background-color: #E5E5E5;
+  box-shadow: 0px 13px 20px rgba(0, 0, 0, 0.2);
+}
+
+.reading-title, .listening-title {
+  text-decoration: underline;
+  font-style: italic;
+  color: white;
+  font-size: 22px;
+  background-color: #5b5ea6;
+}
+
+.results {
+  font-size: 15px;
+  border-radius: 20px;
+  background-color: #5B5EA6;
+  color: white;
+  border: none;
+  outline: none;
+  transition: all 0.3s ease 0s;
+}
+
+.results:hover {
+  opacity: 0.8;
+}
+
+.w-20 {
+  display: inline-block;
+  width: 20px;
+}
+
+.audio-player {
+  outline: none;
+}

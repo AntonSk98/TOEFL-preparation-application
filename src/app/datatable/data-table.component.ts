@@ -7,6 +7,7 @@ import {Speaking} from '../models/speaking';
 import {Writing} from '../models/writing';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
 import {ListeningService} from '../services/listening.service';
+import {SpeakingService} from '../services/speaking.service';
 
 @Component({
   selector: 'app-datatable',
@@ -27,7 +28,8 @@ export class DataTableComponent implements OnInit, OnDestroy {
 
   constructor(
     private readingService: ReadingService,
-    private listeningService: ListeningService
+    private listeningService: ListeningService,
+    private speakingService: SpeakingService
   ) { }
 
   ngOnInit() {
@@ -85,26 +87,50 @@ export class DataTableComponent implements OnInit, OnDestroy {
   }
 
   private getSpeakingOneTasks() {
-    console.log(this.speaking.speakingOne);
+    this.loading = true;
+    this.speakingService.getSpeakingOneTasks().subscribe((value: any) => {
+      this.loading = false;
+      this.topics = value;
+    });
   }
 
   private getSpeakingTwoTasks() {
-    console.log(this.speaking.speakingTwo);
+    this.loading = true;
+    this.speakingService.getSpeakingTwoTasks().subscribe((value: any) => {
+      this.loading = false;
+      this.topics = value;
+    });
   }
 
   private getSpeakingThreeTasks() {
-    console.log(this.speaking.speakingThree);
+    this.loading = true;
+    this.speakingService.getSpeakingThreeTasks().subscribe((value: any) => {
+      this.loading = false;
+      this.topics = value;
+    });
   }
 
   private getSpeakingFourTasks() {
-    console.log(this.speaking.speakingFour);
+    this.loading = true;
+    this.speakingService.getSpeakingFourTasks().subscribe((value: any) => {
+      this.loading = false;
+      this.topics = value;
+    });
   }
 
   private getSpeakingExOneTasks() {
-    console.log(this.speaking.speakingExOne);
+    this.loading = true;
+    this.speakingService.getSpeakingEx1Tasks().subscribe((value: any) => {
+      this.loading = false;
+      this.topics = value;
+    });
   }
 
   private getSpeakingExTwoTasks() {
-    console.log(this.speaking.speakingExTwo);
+    this.loading = true;
+    this.speakingService.getSpeakingEx2Tasks().subscribe((value: any) => {
+      this.loading = false;
+      this.topics = value;
+    });
   }
 }

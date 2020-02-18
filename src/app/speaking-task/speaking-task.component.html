@@ -1,0 +1,32 @@
+<div class="title ml-15px p-3">TOEFL {{speakingTask}} Practice {{speakingNumber}}</div>
+<div class="d-flex justify-content-center">
+  <div class="mt-5 reading-block w-75">
+    <div class="reading-title p-3">
+      <span *ngIf="speakingTask === speaking.speakingTwo" class="ml-3">READ A CAMPUS ANNOUNCEMENT</span>
+      <span *ngIf="speakingTask === speaking.speakingThree" class="ml-3">READ A SHORT PASSAGE</span>
+    </div>
+    <div class="control m-3">
+      <button class="results w-auto pl-4 pr-5 pt-2 pb-2" (click)="changeStateOfTimer()">
+        <fa-icon [icon]="faPlay" class="arrow mr-1"></fa-icon>
+        <span *ngIf="isTimerPaused === true" class="w-20">START</span>
+        <span *ngIf="isTimerPaused === false" class="w-20">STOP</span>
+      </button>
+      <cd-timer #timer [startTime]="50" format="hms" countdown="true" class="pl-2 timer" (onTick)="resetTimer()"
+                (onComplete)="completeTimer()"></cd-timer>
+    </div>
+    <div class="m-3">{{hardCode}}</div>
+  </div>
+</div>
+
+<div class="d-flex justify-content-center">
+  <div class="mt-5 listening-block w-75">
+    <div class="listening-title p-3">
+      <span *ngIf="speakingTask === speaking.speakingTwo" class="ml-3">LISTEN TO A CONVERSATION</span>
+      <span *ngIf="speakingTask === speaking.speakingThree" class="ml-3">LISTEN TO A LECTURE</span>
+    </div>
+    <div class="control ml-3 mt-4 mb-4">
+      <audio class="audio-player w-75" src="./assets/{{speakingTask | lowercase}}/{{speakingNumber}}.mp3"
+             controls controlsList="nodownload" preload="none"></audio>
+    </div>
+  </div>
+</div>

@@ -9,7 +9,7 @@ import {
   ListeningQuestions
 } from '../models/listeningEntity';
 import {ListeningService} from '../services/listening.service';
-import {AnswerChoice} from "../models/readingEntity";
+import {AnswerChoice} from '../models/readingEntity';
 
 @Component({
   selector: 'app-listening-task',
@@ -86,6 +86,7 @@ export class ListeningTaskComponent implements OnInit, AfterViewInit {
   }
 
   goToQuestions() {
+    this.startTimer();
     this.isAudioPlaying = false;
     this.listeningService.getListeningEntityByID(this.listeningNumber)
       .subscribe((listeningEntity: ListeningEntity) => this.listeningEntity = listeningEntity);

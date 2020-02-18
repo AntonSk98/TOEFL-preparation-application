@@ -293,7 +293,68 @@ ListeningPart: {
       .catch(err => mainWindow.send('listening-average-score-sent', 'Error occurred while getting average score'))
   })
 }
-
+SpeakingPart: {
+  ipcMain.on('get-speaking-one', async () => {
+    const result = connection('speaking1').select('id').select('title').select('score');
+    await result.then( rows => {
+      mainWindow.send('speaking-one-sent', rows);
+    })
+      .catch(err => mainWindow.send("speaking-one-sent", {
+        status: 'error',
+        message: 'Error occurred while getting speaking tasks'
+      }))
+  })
+  ipcMain.on('get-speaking-two', async () => {
+    const result = connection('speaking2').select('id').select('title').select('score');
+    await result.then( rows => {
+      mainWindow.send('speaking-two-sent', rows);
+    })
+      .catch(err => mainWindow.send("speaking-two-sent", {
+        status: 'error',
+        message: 'Error occurred while getting speaking tasks'
+      }))
+  })
+  ipcMain.on('get-speaking-three', async () => {
+    const result = connection('speaking3').select('id').select('title').select('score');
+    await result.then( rows => {
+      mainWindow.send('speaking-three-sent', rows);
+    })
+      .catch(err => mainWindow.send("speaking-three-sent", {
+        status: 'error',
+        message: 'Error occurred while getting speaking tasks'
+      }))
+  })
+  ipcMain.on('get-speaking-four', async () => {
+    const result = connection('speaking4').select('id').select('title').select('score');
+    await result.then( rows => {
+      mainWindow.send('speaking-four-sent', rows);
+    })
+      .catch(err => mainWindow.send("speaking-four-sent", {
+        status: 'error',
+        message: 'Error occurred while getting speaking tasks'
+      }))
+  })
+  ipcMain.on('get-speaking-five', async () => {
+    const result = connection('exercise1').select('id').select('title').select('score');
+    await result.then( rows => {
+      mainWindow.send('speaking-five-sent', rows);
+    })
+      .catch(err => mainWindow.send("speaking-five-sent", {
+        status: 'error',
+        message: 'Error occurred while getting speaking tasks'
+      }))
+  })
+  ipcMain.on('get-speaking-six', async () => {
+    const result = connection('exercise2').select('id').select('title').select('score');
+    await result.then( rows => {
+      mainWindow.send('speaking-six-sent', rows);
+    })
+      .catch(err => mainWindow.send("speaking-six-sent", {
+        status: 'error',
+        message: 'Error occurred while getting speaking tasks'
+      }))
+  })
+}
 
 // npm run start:electron
 //B
