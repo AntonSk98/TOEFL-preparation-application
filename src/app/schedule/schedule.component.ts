@@ -4,8 +4,10 @@ import {NgbDate, NgbDateParserFormatter, NgbDateStruct} from '@ng-bootstrap/ng-b
 import {TargetService} from '../services/target.service';
 import {TargetSettings} from '../models/targetSettings';
 import {AverageProgress} from '../models/averageProgress';
-import {NotificationService} from "../services/notification.service";
-import {ReadingService} from "../services/reading.service";
+import {NotificationService} from '../services/notification.service';
+import {ReadingService} from '../services/reading.service';
+import {ListeningService} from '../services/listening.service';
+import {SpeakingService} from '../services/speaking.service';
 
 @Component({
   selector: 'app-schedule',
@@ -32,6 +34,8 @@ export class ScheduleComponent implements OnInit, OnDestroy {
     private parserFormatter: NgbDateParserFormatter,
     private notificationService: NotificationService,
     private readingService: ReadingService,
+    private listeningService: ListeningService,
+    private speakingService: SpeakingService
   ) {
   }
 
@@ -43,6 +47,8 @@ export class ScheduleComponent implements OnInit, OnDestroy {
       this.countSumTargetScore();
     });
     this.readingService.getAverageScore().subscribe( (value: number) => this.averageProgress.averageReading = value);
+    this.listeningService.getAverageScore().subscribe((value: number) => this.averageProgress.averageListening = value);
+    this.speakingService.getAverageScore().subscribe((value: number) => this.averageProgress.averageSpeaking = value);
   }
   convertDateToNGBDATE(testDate: string): NgbDateStruct {
     const date = new Date(testDate);

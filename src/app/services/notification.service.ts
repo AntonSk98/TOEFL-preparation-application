@@ -10,4 +10,7 @@ export class NotificationService {
   showMessage(message: any) {
     message.status === 'success' ? this.toastr.success(message.message) : this.toastr.error(message.message);
   }
+  showWarning(message: any) {
+    this.toastr.warning(message);
+  }
 }

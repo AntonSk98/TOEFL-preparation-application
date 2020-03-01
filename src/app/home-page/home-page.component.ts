@@ -8,6 +8,7 @@ import {ReadingService} from '../services/reading.service';
 import {TargetSettings} from '../models/targetSettings';
 import {TargetService} from '../services/target.service';
 import {ListeningService} from '../services/listening.service';
+import {SpeakingService} from '../services/speaking.service';
 @Component({
   selector: 'app-home-page',
   templateUrl: './home-page.component.html',
@@ -49,7 +50,8 @@ export class HomePageComponent implements OnInit, AfterViewInit {
   constructor(
     private listeningService: ListeningService,
     private readingService: ReadingService,
-    private targetService: TargetService) {
+    private targetService: TargetService,
+    private speakingService: SpeakingService) {
   }
 
   hideShow() {
@@ -66,6 +68,9 @@ export class HomePageComponent implements OnInit, AfterViewInit {
     }
     if (clickedSection === this.sections.listening) {
       this.listeningService.getCompleteness().subscribe((value: number) => this.completeness = value);
+    }
+    if (clickedSection === this.sections.speaking) {
+      this.speakingService.getCompleteness().subscribe((value: number) => this.completeness = value);
     }
     if (clickedSection === this.sections.writing) {
       this.writingSectionTitle = 'Integrated writing';
@@ -107,6 +112,7 @@ export class HomePageComponent implements OnInit, AfterViewInit {
     });
     this.readingService.getAverageScore().subscribe((value: number) => this.averageScore.averageReadingScore = value );
     this.listeningService.getAverageScore().subscribe((value: number) => this.averageScore.averageListeningScore = value );
+    this.speakingService.getAverageScore().subscribe((value: number) => this.averageScore.averageSpeakingScore = value);
   }
 
   ngAfterViewInit(): void {
