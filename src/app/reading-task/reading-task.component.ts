@@ -1,16 +1,17 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { faArrowLeft, faClock } from '@fortawesome/free-solid-svg-icons';
 import { CdTimerComponent } from 'angular-cd-timer';
 import { ReadingService } from '../services/reading.service';
 import { AnswerChoice, CorrectAnswer, ReadingEntity } from '../models/readingEntity';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-reading-task',
   templateUrl: './reading-task.component.html',
   styleUrls: ['./reading-task.component.css']
 })
-export class ReadingTaskComponent implements OnInit, AfterViewInit {
+export class ReadingTaskComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('timer', {
     static: false
   }) timer: CdTimerComponent;
@@ -26,6 +27,7 @@ export class ReadingTaskComponent implements OnInit, AfterViewInit {
   passage: string;
   loading = true;
   readingEntity: ReadingEntity = new ReadingEntity();
+  subscriptions = new Subscription();
   questionIndex = 0;
   readingScore = -1;
   selectedChoices: AnswerChoice[] = [];
@@ -38,16 +40,18 @@ export class ReadingTaskComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.readingNumber = this.route.snapshot.params.id;
-    this.readingService.getReadingQuestionsByID(this.readingNumber).subscribe((value: ReadingEntity) => this.readingEntity = value);
+    this.subscriptions.add(
+      this.readingService.getReadingQuestionsByID(this.readingNumber).subscribe((value: ReadingEntity) => this.readingEntity = value)
+    );
   }
 
   ngAfterViewInit(): void {
     this.loading = true;
-    this.readingService.getReadingPassageById(this.readingNumber).subscribe((value: string) => {
+    this.subscriptions.add(this.readingService.getReadingPassageById(this.readingNumber).subscribe((value: string) => {
       this.loading = false;
       this.passage = value;
       this.studyText.nativeElement.insertAdjacentHTML('beforeend', this.addNeededStyles(this.passage));
-    });
+    }));
   }
 
   stopTimer() {
@@ -134,7 +138,7 @@ export class ReadingTaskComponent implements OnInit, AfterViewInit {
     this.readingScore = this.composeResultArray();
     this.questionIndex = 0;
     const readingScoreInPercent = Math.round((this.readingScore / (this.readingEntity.questions.length + 1) * 100) * 100) / 100;
-    this.readingService.updateReadingScoreByID(this.readingNumber, readingScoreInPercent).subscribe();
+    this.subscriptions.add(this.readingService.updateReadingScoreByID(this.readingNumber, readingScoreInPercent).subscribe());
   }
 
   composeResultArray(): number {
@@ -294,6 +298,10 @@ export class ReadingTaskComponent implements OnInit, AfterViewInit {
     if (counter - 3 === questionNumber) {
       return 'A';
     }
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 }
 

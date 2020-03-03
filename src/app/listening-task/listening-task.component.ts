@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {faArrowLeft, faClock, faPlayCircle} from '@fortawesome/free-solid-svg-icons';
 import {CdTimerComponent} from 'angular-cd-timer';
@@ -10,19 +10,21 @@ import {
 } from '../models/listeningEntity';
 import {ListeningService} from '../services/listening.service';
 import {AnswerChoice} from '../models/readingEntity';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-listening-task',
   templateUrl: './listening-task.component.html',
   styleUrls: ['./listening-task.component.css']
 })
-export class ListeningTaskComponent implements OnInit, AfterViewInit {
+export class ListeningTaskComponent implements OnInit, OnDestroy {
   @ViewChild('timer', {
     static: false
   }) timer: CdTimerComponent;
   @ViewChild('audio', {
     static: false
   }) audio: ElementRef;
+  subscriptions = new Subscription();
   listeningNumber: number;
   listeningType: string;
   listeningTitle: string;
@@ -47,9 +49,6 @@ export class ListeningTaskComponent implements OnInit, AfterViewInit {
     this.listeningNumber = this.route.snapshot.params.id;
     this.listeningType = this.route.snapshot.params.type;
     this.listeningTitle = this.route.snapshot.params.title;
-  }
-
-  ngAfterViewInit(): void {
   }
 
   startTimer() {
@@ -88,8 +87,8 @@ export class ListeningTaskComponent implements OnInit, AfterViewInit {
   goToQuestions() {
     this.startTimer();
     this.isAudioPlaying = false;
-    this.listeningService.getListeningEntityByID(this.listeningNumber)
-      .subscribe((listeningEntity: ListeningEntity) => this.listeningEntity = listeningEntity);
+    this.subscriptions.add(this.listeningService.getListeningEntityByID(this.listeningNumber)
+      .subscribe((listeningEntity: ListeningEntity) => this.listeningEntity = listeningEntity));
   }
 
   moveBack() {
@@ -156,7 +155,7 @@ export class ListeningTaskComponent implements OnInit, AfterViewInit {
     this.calculateScoreForSession();
     this.questionIndex = 0;
     const listeningScoreInPercent = Math.round((this.listeningScore / this.getListeningScore() * 100) * 100) / 100;
-    this.listeningService.updateListeningScoreByID(this.listeningNumber, listeningScoreInPercent).subscribe();
+    this.subscriptions.add(this.listeningService.updateListeningScoreByID(this.listeningNumber, listeningScoreInPercent).subscribe());
   }
 
   private calculateScoreForSession() {
@@ -268,5 +267,9 @@ export class ListeningTaskComponent implements OnInit, AfterViewInit {
         if (answerIds.includes(value.answerID)) { correctAnswers = correctAnswers + value.letter; }
       });
     return correctAnswers;
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 }

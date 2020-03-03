@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Speaking} from '../models/speaking';
 import {faPlay, faTable, faWindowClose} from '@fortawesome/free-solid-svg-icons';
@@ -6,6 +6,7 @@ import {CdTimerComponent} from 'angular-cd-timer';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {SpeakingService} from '../services/speaking.service';
 import {NotificationService} from '../services/notification.service';
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-speaking-task',
@@ -28,7 +29,7 @@ import {NotificationService} from '../services/notification.service';
     ]),
   ]
 })
-export class SpeakingTaskComponent implements OnInit {
+export class SpeakingTaskComponent implements OnInit, OnDestroy {
 
   @ViewChild('timer', {
     static: false
@@ -50,6 +51,7 @@ export class SpeakingTaskComponent implements OnInit {
   speakingTask: string;
   showTable = false;
   speaking: Speaking = new Speaking();
+  subscriptions = new Subscription();
   textToRead: string;
   question: string;
   score: number;
@@ -66,11 +68,12 @@ export class SpeakingTaskComponent implements OnInit {
   ngOnInit() {
     this.speakingNumber = this.route.snapshot.params.id;
     this.speakingTask = this.route.snapshot.params.type;
-    this.speakingService.getTextAndQuestionByTextTypeAndId(this.speakingTask, this.speakingNumber).subscribe((object: any) => {
-      this.textToRead = object.text;
-      this.question = object.question;
-    });
-    console.log(this.speakingTask === this.speaking.speakingOne);
+    this.subscriptions.add(
+      this.speakingService.getTextAndQuestionByTextTypeAndId(this.speakingTask, this.speakingNumber).subscribe((object: any) => {
+        this.textToRead = object.text;
+        this.question = object.question;
+      })
+    );
   }
 
   completeReadingTimer() {
@@ -121,10 +124,12 @@ export class SpeakingTaskComponent implements OnInit {
   }
 
   submitPerformance() {
-    this.speakingService.savePerformance(this.speakingTask, this.speakingNumber, this.score).subscribe( (message: string) => {
-      this.notificationService.showMessage(message);
-      setTimeout(() => this.router.navigateByUrl('/').then(() => {} ), 3000);
-    });
+    this.subscriptions.add(
+      this.speakingService.savePerformance(this.speakingTask, this.speakingNumber, this.score).subscribe( (message: string) => {
+        this.notificationService.showMessage(message);
+        setTimeout(() => this.router.navigateByUrl('/').then(() => {} ), 5000);
+      })
+    );
   }
 
   manipulateTable() {
@@ -152,5 +157,9 @@ export class SpeakingTaskComponent implements OnInit {
   completePreparationTimer() {
     this.answerPreparationPaused = true;
     this.timerPreparation.reset();
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 }

@@ -1,91 +1,94 @@
-<div class="title ml-15px p-3">TOEFL Reading Practice {{readingNumber}}</div>
-<div class="header d-flex justify-content-between m-3">
-  <button class="btn btn-sm w-auto back" [routerLink]="'/'">
-    <fa-icon [icon]="faBackward" class="arrow mr-1"></fa-icon>
-    Go back
-  </button>
-  <span *ngIf="readingScore === -1">
+<perfect-scrollbar>
+  <div class="title ml-15px p-3">TOEFL Reading Practice {{readingNumber}}</div>
+  <div class="header d-flex justify-content-between m-3">
+    <button class="btn btn-sm w-auto back" [routerLink]="'/'">
+      <fa-icon [icon]="faBackward" class="arrow mr-1"></fa-icon>
+      Go back
+    </button>
+    <span *ngIf="readingScore === -1">
 		<fa-icon [icon]="faClock" class="timer"></fa-icon>
 		<cd-timer #timer [startTime]="1080" format="hms" countdown="true" class="pl-2 timer"
               (onStop)="stopTimer()"></cd-timer>
 	</span>
-  <span *ngIf="readingScore !== -1" class="font-weight-bold">Your score: {{readingScore}}/{{this.readingEntity.questions.length + 1}}</span>
-</div>
-<hr>
-<div class="d-flex justify-content-center">
-  <div class="">
-    <span class="navigation" (click)="moveBack()">&#60;</span>
-    <span class="ml-2 mr-2 questions">{{questionIndex + 1}}&#47;{{readingEntity.questions.length + 1}}</span>
-    <span class="navigation" (click)="moveForward()">&#62;</span>
+    <span *ngIf="readingScore !== -1" class="font-weight-bold">Your score: {{readingScore}}/{{this.readingEntity.questions.length + 1}}</span>
   </div>
-</div>
-<div class="study-content d-flex justify-content-between m-3" style="">
-  <mat-card *ngIf="loading"
-            style="display: flex; justify-content: center; align-items: center; height: 100%; width: 100%">
-    <mat-progress-spinner
-      color="#5B5EA6"
-      mode="indeterminate"></mat-progress-spinner>
-  </mat-card>
-  <perfect-scrollbar class="scrollbar" *ngIf="!loading">
-    <div class="question-side">
-      <div #question></div>
-      <div *ngIf="this.questionIndex < 8 " class="question-content mb-3 font-weight-bold">
-        {{readingEntity?.questions[questionIndex]?.question}}
-      </div>
-      <hr *ngIf="questionIndex < 10">
-      <div *ngIf="questionIndex < 10" class="answer-choices">
-        <ul *ngIf="readingScore === -1">
-          <li *ngFor="let choice of getChoicesForQuestion(questionIndex + 1)">
-            <label class="container">{{choice.answerChoice}}
-              <input #checkbox type="checkbox" class="styled-checkbox" (change)="onChange(choice, checkbox.checked)"
-                     [checked]="checkSelected(choice)">
-              <span class="checkmark"></span>
-            </label>
-          </li>
-        </ul>
-        <ul *ngIf="readingScore !== -1">
-          <li *ngFor="let choice of getChoicesForQuestion(questionIndex + 1)">
-            <label class="container" [style.color]="defineColorForAnswerChoice(choice)">{{choice.answerChoice}}
-              <input type="checkbox" class="styled-checkbox" [disabled]="true" [checked]="checkSelected(choice)">
-              <span class="checkmark" [style.background-color]="defineColorForAnswerChoice(choice)"></span>
-            </label>
-          </li>
-        </ul>
-      </div>
-      <div *ngIf="(questionIndex===10 && readingScore === -1)" class="d-flex flex-column align-items-center">
-        <p>You have seen all of the questions in the reading section.</p>
-        <p>As long as there is time remaining, you can go back and check your work.</p>
-        <p>Click VIEW RESULTS to submit your answers and review your work.</p>
-        <button class="w-auto results" (click)="viewResults()">
-          <span class="p-2">VIEW RESULTS</span>
-        </button>
-      </div>
-      <div *ngIf="(questionIndex===10 && readingScore !== -1)" class="d-flex flex-column align-items-center">
-        <p>You have reviewed all of the questions in the reading section.</p>
-        <p>Click GO BACK to close this test</p>
-        <div class="d-flex justify-content-between">
-          <button class="w-auto results ml-2" [routerLink]="'/'">
-            <span class="p-2">GO BACK</span>
+  <hr>
+  <div class="d-flex justify-content-center">
+    <div class="">
+      <span class="navigation" (click)="moveBack()">&#60;</span>
+      <span class="ml-2 mr-2 questions">{{questionIndex + 1}}&#47;{{readingEntity.questions.length + 1}}</span>
+      <span class="navigation" (click)="moveForward()">&#62;</span>
+    </div>
+  </div>
+  <div class="study-content d-flex justify-content-between m-3" style="">
+    <mat-card *ngIf="loading"
+              style="display: flex; justify-content: center; align-items: center; height: 100%; width: 100%">
+      <mat-progress-spinner
+        color="#5B5EA6"
+        mode="indeterminate"></mat-progress-spinner>
+    </mat-card>
+    <perfect-scrollbar class="scrollbar" *ngIf="!loading">
+      <div class="question-side">
+        <div #question></div>
+        <div *ngIf="this.questionIndex < 8 " class="question-content mb-3 font-weight-bold">
+          {{readingEntity?.questions[questionIndex]?.question}}
+        </div>
+        <hr *ngIf="questionIndex < 10">
+        <div *ngIf="questionIndex < 10" class="answer-choices">
+          <ul *ngIf="readingScore === -1">
+            <li *ngFor="let choice of getChoicesForQuestion(questionIndex + 1)">
+              <label class="container">{{choice.answerChoice}}
+                <input #checkbox type="checkbox" class="styled-checkbox" (change)="onChange(choice, checkbox.checked)"
+                       [checked]="checkSelected(choice)">
+                <span class="checkmark"></span>
+              </label>
+            </li>
+          </ul>
+          <ul *ngIf="readingScore !== -1">
+            <li *ngFor="let choice of getChoicesForQuestion(questionIndex + 1)">
+              <label class="container" [style.color]="defineColorForAnswerChoice(choice)">{{choice.answerChoice}}
+                <input type="checkbox" class="styled-checkbox" [disabled]="true" [checked]="checkSelected(choice)">
+                <span class="checkmark" [style.background-color]="defineColorForAnswerChoice(choice)"></span>
+              </label>
+            </li>
+          </ul>
+        </div>
+        <div *ngIf="(questionIndex===10 && readingScore === -1)" class="d-flex flex-column align-items-center">
+          <p>You have seen all of the questions in the reading section.</p>
+          <p>As long as there is time remaining, you can go back and check your work.</p>
+          <p>Click VIEW RESULTS to submit your answers and review your work.</p>
+          <button class="w-auto results" (click)="viewResults()">
+            <span class="p-2">VIEW RESULTS</span>
           </button>
         </div>
+        <div *ngIf="(questionIndex===10 && readingScore !== -1)" class="d-flex flex-column align-items-center">
+          <p>You have reviewed all of the questions in the reading section.</p>
+          <p>Click GO BACK to close this test</p>
+          <div class="d-flex justify-content-between">
+            <button class="w-auto results ml-2" [routerLink]="'/'">
+              <span class="p-2">GO BACK</span>
+            </button>
+          </div>
+        </div>
+        <div *ngIf="(readingScore !== -1 && questionIndex < 10)" class="explanation d-flex flex-column">
+          <div class="explanation-title d-flex">
+            <span class="m-3">ANSWER EXPLANATION</span>
+          </div>
+          <div *ngIf="questionIndex < 9" class="ml-3 mr-3 mt-3">Correct Answer: {{pasteCorrectAnswerLetter()}}
+          </div>
+          <div *ngIf="questionIndex === 9" class="ml-3 mr-3 mt-3">Correct Answer: {{pasteCorrectAnswersForMultiple()}}</div>
+          <div *ngIf="questionIndex < 9" class="ml-3 mr-3">Your Selection: {{pasteSelectedAnswerLetter()}}
+          </div>
+          <div *ngIf="questionIndex === 9" class="ml-3 mr-3">Your Selection: {{pasteSelectedAnswersForMultiple()}}</div>
+          <br>
+          <div class="question-content ml-3 mr-3 mb-3">{{pasteAnswerExplanation()}}</div>
+        </div>
       </div>
-      <div *ngIf="(readingScore !== -1 && questionIndex < 10)" class="explanation d-flex flex-column">
-        <div class="explanation-title d-flex">
-          <span class="m-3">ANSWER EXPLANATION</span>
-        </div>
-        <div *ngIf="questionIndex < 9" class="ml-3 mr-3 mt-3">Correct Answer: {{pasteCorrectAnswerLetter()}}
-        </div>
-        <div *ngIf="questionIndex === 9" class="ml-3 mr-3 mt-3">Correct Answer: {{pasteCorrectAnswersForMultiple()}}</div>
-        <div *ngIf="questionIndex < 9" class="ml-3 mr-3">Your Selection: {{pasteSelectedAnswerLetter()}}
-        </div>
-        <div *ngIf="questionIndex === 9" class="ml-3 mr-3">Your Selection: {{pasteSelectedAnswersForMultiple()}}</div>
-        <br>
-        <div class="question-content ml-3 mr-3 mb-3">{{pasteAnswerExplanation()}}</div>
-      </div>
-    </div>
-  </perfect-scrollbar>
-  <perfect-scrollbar class="scrollbar" [style.display]="loading ? 'none':''">
-    <div class="text-side" #studyText></div>
-  </perfect-scrollbar>
-</div>
+    </perfect-scrollbar>
+    <perfect-scrollbar class="scrollbar" [style.display]="loading ? 'none':''">
+      <div class="text-side" #studyText></div>
+    </perfect-scrollbar>
+  </div>
+</perfect-scrollbar>
+
 

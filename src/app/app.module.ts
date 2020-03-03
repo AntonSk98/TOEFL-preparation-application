@@ -23,11 +23,13 @@ import { ListeningTaskComponent } from './listening-task/listening-task.componen
 import {NgxAudioPlayerModule} from 'ngx-audio-player';
 import {APP_BASE_HREF} from '@angular/common';
 import { SpeakingTaskComponent } from './speaking-task/speaking-task.component';
+import { WritingTaskComponent } from './writing-task/writing-task.component';
 
 const appRoutes: Routes = [
   { path: 'reading-task/:id', component: ReadingTaskComponent },
   { path: 'listening-task/:id/:type/:title', component: ListeningTaskComponent },
   { path: 'speaking-task/:id/:type', component: SpeakingTaskComponent },
+  { path: 'writing-task/:id/:type', component: WritingTaskComponent },
   {
     path: '',
     component: HomePageComponent,
@@ -49,6 +51,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     ReadingTaskComponent,
     ListeningTaskComponent,
     SpeakingTaskComponent,
+    WritingTaskComponent,
   ],
   imports: [
     BrowserModule,

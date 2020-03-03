@@ -1,104 +1,106 @@
-<div class="title ml-15px p-3">TOEFL Listening Practice {{listeningNumber}}</div>
-<div class="header d-flex justify-content-between m-3">
-  <button class="btn btn-sm w-auto back" [routerLink]="'/'">
-    <fa-icon [icon]="faBackward" class="arrow mr-1"></fa-icon>
-    Go back
-  </button>
-  <span *ngIf="listeningScore === -1">
+<perfect-scrollbar>
+  <div class="title ml-15px p-3">TOEFL Listening Practice {{listeningNumber}}</div>
+  <div class="header d-flex justify-content-between m-3">
+    <button class="btn btn-sm w-auto back" [routerLink]="'/'">
+      <fa-icon [icon]="faBackward" class="arrow mr-1"></fa-icon>
+      Go back
+    </button>
+    <span *ngIf="listeningScore === -1">
 		<fa-icon [icon]="faClock" class="timer"></fa-icon>
 		<cd-timer #timer [startTime]="210" format="hms" countdown="true" class="pl-2 timer" (onTick)="stopTimer()"
               (onComplete)="completeTimer()"></cd-timer>
 	</span>
-  <span *ngIf="listeningScore !== -1" class="font-weight-bold">Your score: {{listeningScore}}/{{getListeningScore()}}</span>
-</div>
-<hr>
-<div *ngIf="showDirections" class="directions">
-  <p>In this question, you'll listen to a {{listeningType}}, then answer questions related to that lecture. Answer the questions based on what is stated or implied by the speakers.</p>
-  <p>You may take notes while you listen. You may use your notes to help you answer the questions.</p>
-  <p>We recommend you practice taking notes with a pen and paper like you will during your TOEFL exam.</p>
-  <button class="w-auto start-task" (click)="startTask()">
-    <span class="p-2">START</span>
-  </button>
-</div>
-<div *ngIf="isAudioPlaying" class="playing">
-  <div class="listening-title mb-2">{{pasteTodayTopic()}}</div>
-  <img *ngIf="listeningType === 'lecture'" src="./lecture.jpg" class="w-100 task-image" alt="">
-  <img *ngIf="listeningType !== 'lecture'" src="./conversation.jpg" class="w-100 task-image" alt="">
-  <div class="text-center">
-    <audio class="audio-player" src="./assets/listening/{{listeningNumber}}.mp3"
-           controls controlsList="nodownload" autoplay preload="none" (ended)="goToQuestions()"></audio>
+    <span *ngIf="listeningScore !== -1" class="font-weight-bold">Your score: {{listeningScore}}/{{getListeningScore()}}</span>
   </div>
-</div>
-<div *ngIf="(!showDirections && !isAudioPlaying)" class="d-flex justify-content-center">
-  <div class="">
-    <span class="navigation" (click)="moveBack()">&#60;</span>
-    <span class="ml-2 mr-2 questions">{{questionIndex + 1}}&#47;{{listeningEntity?.listeningQuestions?.length + 1}}</span>
-    <span class="navigation" (click)="moveForward()">&#62;</span>
+  <hr>
+  <div *ngIf="showDirections" class="directions">
+    <p>In this question, you'll listen to a {{listeningType}}, then answer questions related to that lecture. Answer the questions based on what is stated or implied by the speakers.</p>
+    <p>You may take notes while you listen. You may use your notes to help you answer the questions.</p>
+    <p>We recommend you practice taking notes with a pen and paper like you will during your TOEFL exam.</p>
+    <button class="w-auto start-task" (click)="startTask()">
+      <span class="p-2">START</span>
+    </button>
   </div>
-</div>
-<div *ngIf="(!showDirections && !isAudioPlaying)" class="study-content d-flex justify-content-between m-3">
-  <div class="w-60">
-    <perfect-scrollbar class="scrollbar">
-      <div class="question-side">
-        <div *ngIf="this.questionIndex < listeningEntity?.listeningQuestions?.length " class="question-content mb-3 font-weight-bold">
-          {{listeningEntity?.listeningQuestions[questionIndex]?.question}}
-        </div>
-        <div *ngIf="listeningEntity?.listeningQuestions[questionIndex]?.audioPath">
-          <audio #audio class="audio-player-boost" src="{{listeningEntity?.listeningQuestions[questionIndex]?.audioPath}}"></audio>
-          <fa-icon [icon]="faPlay" class="play-task" (click)="playAudioTask()"></fa-icon>
-          <span class="ml-3 align-super">CLICK the audio image to listen</span>
-        </div>
-        <hr *ngIf="questionIndex < listeningEntity?.listeningQuestions?.length">
-        <div *ngIf="questionIndex < listeningEntity?.listeningQuestions?.length" class="answer-choices">
-          <ul *ngIf="listeningScore === -1">
-                      <li *ngFor="let choice of getChoicesForQuestion(listeningEntity?.listeningQuestions[questionIndex]?.id)">
-                        <label class="container">{{choice.answerChoice}}
-                          <input #checkbox type="checkbox" class="styled-checkbox" (change)="onChange(choice, checkbox.checked)"
-                                 [checked]="checkSelected(choice)">
-                          <span class="checkmark"></span>
-                        </label>
-                      </li>
-          </ul>
-          <ul *ngIf="listeningScore !== -1">
-            <li *ngFor="let choice of getChoicesForQuestion(listeningEntity?.listeningQuestions[questionIndex]?.id)">
-              <label class="container" [style.color]="defineColorForAnswerChoice(choice)">{{choice.answerChoice}}
-                <input type="checkbox" class="styled-checkbox" [disabled]="true" [checked]="checkSelected(choice)">
-                <span class="checkmark" [style.background-color]="defineColorForAnswerChoice(choice)"></span>
-              </label>
-            </li>
-          </ul>
-        </div>
-        <div *ngIf="(questionIndex===this.listeningEntity?.listeningQuestions?.length && listeningScore === -1)" class="d-flex flex-column align-items-center">
-          <p>You have seen all of the questions in the listening section.</p>
-          <p>As long as there is time remaining, you can go back and check your work.</p>
-          <p>Click VIEW RESULTS to submit your answers and review your work.</p>
-          <button class="w-auto results" (click)="viewResults()">
-            <span class="p-2">VIEW RESULTS</span>
-          </button>
-        </div>
-        <div *ngIf="(questionIndex===this.listeningEntity?.listeningQuestions?.length && listeningScore !== -1)" class="d-flex flex-column align-items-center">
-          <p>You have reviewed all of the questions in the listening section.</p>
-          <p>Click GO BACK to close this test</p>
-          <div class="d-flex justify-content-between">
-            <button class="w-auto results ml-2" [routerLink]="'/'">
-              <span class="p-2">GO BACK</span>
+  <div *ngIf="isAudioPlaying" class="playing">
+    <div class="listening-title mb-2">{{pasteTodayTopic()}}</div>
+    <img *ngIf="listeningType === 'lecture'" src="./lecture.jpg" class="w-100 task-image" alt="">
+    <img *ngIf="listeningType !== 'lecture'" src="./conversation.jpg" class="w-100 task-image" alt="">
+    <div class="text-center">
+      <audio class="audio-player" src="./assets/listening/{{listeningNumber}}.mp3"
+             controls controlsList="nodownload" autoplay preload="none" (ended)="goToQuestions()"></audio>
+    </div>
+  </div>
+  <div *ngIf="(!showDirections && !isAudioPlaying)" class="d-flex justify-content-center">
+    <div class="">
+      <span class="navigation" (click)="moveBack()">&#60;</span>
+      <span class="ml-2 mr-2 questions">{{questionIndex + 1}}&#47;{{listeningEntity?.listeningQuestions?.length + 1}}</span>
+      <span class="navigation" (click)="moveForward()">&#62;</span>
+    </div>
+  </div>
+  <div *ngIf="(!showDirections && !isAudioPlaying)" class="study-content d-flex justify-content-between m-3">
+    <div class="w-60">
+      <perfect-scrollbar class="scrollbar">
+        <div class="question-side">
+          <div *ngIf="this.questionIndex < listeningEntity?.listeningQuestions?.length " class="question-content mb-3 font-weight-bold">
+            {{listeningEntity?.listeningQuestions[questionIndex]?.question}}
+          </div>
+          <div *ngIf="listeningEntity?.listeningQuestions[questionIndex]?.audioPath">
+            <audio #audio class="audio-player-boost" src="{{listeningEntity?.listeningQuestions[questionIndex]?.audioPath}}"></audio>
+            <fa-icon [icon]="faPlay" class="play-task" (click)="playAudioTask()"></fa-icon>
+            <span class="ml-3 align-super">CLICK the audio image to listen</span>
+          </div>
+          <hr *ngIf="questionIndex < listeningEntity?.listeningQuestions?.length">
+          <div *ngIf="questionIndex < listeningEntity?.listeningQuestions?.length" class="answer-choices">
+            <ul *ngIf="listeningScore === -1">
+              <li *ngFor="let choice of getChoicesForQuestion(listeningEntity?.listeningQuestions[questionIndex]?.id)">
+                <label class="container">{{choice.answerChoice}}
+                  <input #checkbox type="checkbox" class="styled-checkbox" (change)="onChange(choice, checkbox.checked)"
+                         [checked]="checkSelected(choice)">
+                  <span class="checkmark"></span>
+                </label>
+              </li>
+            </ul>
+            <ul *ngIf="listeningScore !== -1">
+              <li *ngFor="let choice of getChoicesForQuestion(listeningEntity?.listeningQuestions[questionIndex]?.id)">
+                <label class="container" [style.color]="defineColorForAnswerChoice(choice)">{{choice.answerChoice}}
+                  <input type="checkbox" class="styled-checkbox" [disabled]="true" [checked]="checkSelected(choice)">
+                  <span class="checkmark" [style.background-color]="defineColorForAnswerChoice(choice)"></span>
+                </label>
+              </li>
+            </ul>
+          </div>
+          <div *ngIf="(questionIndex===this.listeningEntity?.listeningQuestions?.length && listeningScore === -1)" class="d-flex flex-column align-items-center">
+            <p>You have seen all of the questions in the listening section.</p>
+            <p>As long as there is time remaining, you can go back and check your work.</p>
+            <p>Click VIEW RESULTS to submit your answers and review your work.</p>
+            <button class="w-auto results" (click)="viewResults()">
+              <span class="p-2">VIEW RESULTS</span>
             </button>
           </div>
-        </div>
-        <div *ngIf="(listeningScore !== -1 && questionIndex < this.listeningEntity?.listeningQuestions?.length)" class="explanation d-flex flex-column">
-          <div class="explanation-title d-flex">
-            <span class="m-3">ANSWER EXPLANATION</span>
+          <div *ngIf="(questionIndex===this.listeningEntity?.listeningQuestions?.length && listeningScore !== -1)" class="d-flex flex-column align-items-center">
+            <p>You have reviewed all of the questions in the listening section.</p>
+            <p>Click GO BACK to close this test</p>
+            <div class="d-flex justify-content-between">
+              <button class="w-auto results ml-2" [routerLink]="'/'">
+                <span class="p-2">GO BACK</span>
+              </button>
+            </div>
           </div>
-          <div class="ml-3 mr-3 mt-3">Correct Answer: {{pasteCorrectAnswerLetter(listeningEntity?.listeningQuestions[questionIndex]?.id)}}</div>
-          <div class="ml-3 mr-3">Your Selection: {{pasteSelectedAnswerLetter(listeningEntity?.listeningQuestions[questionIndex]?.id)}}</div>
-          <br>
-          <div class="question-content ml-3 mr-3 mb-3">{{pasteAnswerExplanation(listeningEntity?.listeningQuestions[questionIndex]?.id)}}</div>
+          <div *ngIf="(listeningScore !== -1 && questionIndex < this.listeningEntity?.listeningQuestions?.length)" class="explanation d-flex flex-column">
+            <div class="explanation-title d-flex">
+              <span class="m-3">ANSWER EXPLANATION</span>
+            </div>
+            <div class="ml-3 mr-3 mt-3">Correct Answer: {{pasteCorrectAnswerLetter(listeningEntity?.listeningQuestions[questionIndex]?.id)}}</div>
+            <div class="ml-3 mr-3">Your Selection: {{pasteSelectedAnswerLetter(listeningEntity?.listeningQuestions[questionIndex]?.id)}}</div>
+            <br>
+            <div class="question-content ml-3 mr-3 mb-3">{{pasteAnswerExplanation(listeningEntity?.listeningQuestions[questionIndex]?.id)}}</div>
+          </div>
         </div>
-      </div>
-    </perfect-scrollbar>
+      </perfect-scrollbar>
+    </div>
+    <div class="w-40">
+      <audio class="audio-player-boost" src="./assets/listening/{{listeningNumber}}.mp3"
+             controls controlsList="nodownload" preload="none"></audio>
+    </div>
   </div>
-  <div class="w-40">
-    <audio class="audio-player-boost" src="./assets/listening/{{listeningNumber}}.mp3"
-           controls controlsList="nodownload" preload="none"></audio>
-  </div>
-</div>
+</perfect-scrollbar>

@@ -8,6 +8,7 @@ import {NotificationService} from '../services/notification.service';
 import {ReadingService} from '../services/reading.service';
 import {ListeningService} from '../services/listening.service';
 import {SpeakingService} from '../services/speaking.service';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-schedule',
@@ -28,6 +29,7 @@ export class ScheduleComponent implements OnInit, OnDestroy {
   today = {year: new Date().getFullYear(), month: new Date().getMonth() + 1, day: new Date().getDate()};
   testDate: NgbDateStruct;
   dayRemained: number;
+  subscriptions = new Subscription();
 
   constructor(
     private targetService: TargetService, private ref: ChangeDetectorRef,
@@ -40,15 +42,20 @@ export class ScheduleComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.targetService.getTargetScore().subscribe((value: TargetSettings) => {
-      this.targetSettings = value;
-      this.testDate = this.convertDateToNGBDATE(this.targetSettings.toeflDate);
-      this.dayRemained = this.calculateRemainedDays(this.today, this.testDate);
-      this.countSumTargetScore();
-    });
-    this.readingService.getAverageScore().subscribe( (value: number) => this.averageProgress.averageReading = value);
-    this.listeningService.getAverageScore().subscribe((value: number) => this.averageProgress.averageListening = value);
-    this.speakingService.getAverageScore().subscribe((value: number) => this.averageProgress.averageSpeaking = value);
+    this.subscriptions.add(
+      this.targetService.getTargetScore().subscribe((value: TargetSettings) => {
+        this.targetSettings = value;
+        this.testDate = this.convertDateToNGBDATE(this.targetSettings.toeflDate);
+        this.dayRemained = this.calculateRemainedDays(this.today, this.testDate);
+        this.countSumTargetScore();
+      })
+    );
+    this.subscriptions
+      .add(this.readingService.getAverageScore().subscribe( (value: number) => this.averageProgress.averageReading = value));
+    this.subscriptions
+      .add(this.listeningService.getAverageScore().subscribe((value: number) => this.averageProgress.averageListening = value));
+    this.subscriptions
+      .add(this.speakingService.getAverageScore().subscribe((value: number) => this.averageProgress.averageSpeaking = value));
   }
   convertDateToNGBDATE(testDate: string): NgbDateStruct {
     const date = new Date(testDate);
@@ -66,9 +73,9 @@ export class ScheduleComponent implements OnInit, OnDestroy {
 
   onDateSelected(): void {
     this.dayRemained = this.calculateRemainedDays(this.today, this.testDate);
-    this.targetService.updateToeflDate(this.parserFormatter.format(this.testDate)).subscribe(value => {
+    this.subscriptions.add(this.targetService.updateToeflDate(this.parserFormatter.format(this.testDate)).subscribe(value => {
       this.notificationService.showMessage(value);
-    });
+    }));
   }
   countSumTargetScore(): void {
     this.sumTarget = Number(this.targetSettings.targetReading) +
@@ -91,9 +98,9 @@ export class ScheduleComponent implements OnInit, OnDestroy {
       this.targetSettings.targetSpeaking = 0;
     }
     this.countSumTargetScore();
-    this.targetService.updateToeflScore(this.targetSettings).subscribe(value => {
+    this.subscriptions.add(this.targetService.updateToeflScore(this.targetSettings).subscribe(value => {
       this.notificationService.showMessage(value);
-    });
+    }));
     this.emitTargetScore.emit(this.targetSettings);
   }
 
@@ -127,6 +134,7 @@ export class ScheduleComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 }
 

@@ -18,6 +18,7 @@ function createWindow() {
     minHeight: 768,
     width: 1366,
     height: 768,
+    resizable: false,
     webPreferences: {
       nodeIntegration: true
     }
@@ -209,6 +210,7 @@ ReadingPart: {
       .catch(err => mainWindow.send('average-score-sent', 'Error occurred while getting average score'))
   })
 }
+
 ListeningPart: {
   ipcMain.on('get-listening', async () => {
     const result = connection('listeningPractice').select('id').select('title').select('score').select('type');
@@ -295,6 +297,7 @@ ListeningPart: {
       .catch(err => mainWindow.send('listening-average-score-sent', 'Error occurred while getting average score'))
   })
 }
+
 SpeakingPart: {
   ipcMain.on('get-speaking-one', async () => {
     const result = connection('speaking1').select('id').select('title').select('score');
@@ -484,4 +487,26 @@ SpeakingPart: {
   });
 }
 
+WritingPart: {
+  ipcMain.on('get-integrated-writing', async () => {
+    const result = connection('integratedWriting').select('id').select('title').select('score');
+    await result.then( (rows) => {
+      mainWindow.send('integrated-writing-sent', rows);
+    })
+      .catch(err => mainWindow.send("integrated-writing-sent", {
+        status: 'error',
+        message: 'Error occurred while getting integrated writing tasks'
+      }))
+  });
+  ipcMain.on('get-independent-writing', async () => {
+    const result = connection('independentWriting').select('id').select('title').select('score');
+    await result.then( (rows) => {
+      mainWindow.send('independent-writing-sent', rows);
+    })
+      .catch(err => mainWindow.send("independent-writing-sent", {
+        status: 'error',
+        message: 'Error occurred while getting independent writing tasks'
+      }))
+  });
+}
 // npm run start:electron

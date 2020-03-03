@@ -36,6 +36,9 @@
           <button *ngIf="identification === speaking.speakingFour" class="btn btn-sm" style="font-size: 20px" [routerLink]="['/speaking-task/', element.id, identification]">Start</button>
           <button *ngIf="identification === speaking.speakingExOne" class="btn btn-sm" style="font-size: 20px" [routerLink]="['/speaking-task/', element.id, identification]">Start</button>
           <button *ngIf="identification === speaking.speakingExTwo" class="btn btn-sm" style="font-size: 20px" [routerLink]="['/speaking-task/', element.id, identification]">Start</button>
+          <button *ngIf="identification === writing.integratedWriting" class="btn btn-sm" style="font-size: 20px" [routerLink]="['/writing-task/', element.id, identification]">Start</button>
+          <button *ngIf="identification === writing.independentWriting" class="btn btn-sm" style="font-size: 20px" [routerLink]="['/writing-task/', element.id, identification]">Start</button>
+
         </td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: false" class="datatable-header"></tr>
