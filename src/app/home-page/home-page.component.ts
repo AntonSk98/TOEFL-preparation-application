@@ -10,6 +10,7 @@ import {TargetService} from '../services/target.service';
 import {ListeningService} from '../services/listening.service';
 import {SpeakingService} from '../services/speaking.service';
 import {Subscription} from 'rxjs';
+import {WritingService} from "../services/writing.service";
 @Component({
   selector: 'app-home-page',
   templateUrl: './home-page.component.html',
@@ -53,7 +54,8 @@ export class HomePageComponent implements OnInit, OnDestroy {
     private listeningService: ListeningService,
     private readingService: ReadingService,
     private targetService: TargetService,
-    private speakingService: SpeakingService) {
+    private speakingService: SpeakingService,
+    private writingService: WritingService) {
   }
 
   hideShow() {
@@ -78,6 +80,11 @@ export class HomePageComponent implements OnInit, OnDestroy {
     if (clickedSection === this.sections.speaking) {
       this.subscriptions.add(
         this.speakingService.getCompleteness().subscribe((value: number) => this.completeness = value)
+      );
+    }
+    if (clickedSection === this.sections.writing) {
+      this.subscriptions.add(
+        this.writingService.getCompleteness().subscribe((value: number ) => this.completeness = value)
       );
     }
     if (clickedSection === this.sections.writing) {
@@ -128,6 +135,9 @@ export class HomePageComponent implements OnInit, OnDestroy {
     );
     this.subscriptions.add(
       this.speakingService.getAverageScore().subscribe((value: number) => this.averageScore.averageSpeakingScore = value)
+    );
+    this.subscriptions.add(
+      this.writingService.getAverageScore().subscribe((value: number) => this.averageScore.averageWritingScore = value)
     );
   }
 

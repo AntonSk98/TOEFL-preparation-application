@@ -6,7 +6,7 @@ import {CdTimerComponent} from 'angular-cd-timer';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {SpeakingService} from '../services/speaking.service';
 import {NotificationService} from '../services/notification.service';
-import {Subscription} from "rxjs";
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-speaking-task',
@@ -124,6 +124,7 @@ export class SpeakingTaskComponent implements OnInit, OnDestroy {
   }
 
   submitPerformance() {
+    if (!this.score) { this.score = 0; }
     this.subscriptions.add(
       this.speakingService.savePerformance(this.speakingTask, this.speakingNumber, this.score).subscribe( (message: string) => {
         this.notificationService.showMessage(message);

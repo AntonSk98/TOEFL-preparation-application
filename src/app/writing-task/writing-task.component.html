@@ -1,1 +1,246 @@
-<p>writing-task works!</p>
+<div class="d-flex justify-content-lg-between title ml-15px p-3">
+  <div class="">TOEFL {{writingType}} Practice {{writingNumber}}</div>
+  <div class="close-writing"><fa-icon  class="icon-close" [routerLink]="'/'" [icon]="faBackward"></fa-icon></div>
+</div>
+<div *ngIf="writingType === writing.integratedWriting" class="d-flex justify-content-center">
+  <div class="mt-5 writing-block w-90">
+    <div class="writing-title p-3">
+      <span>READ A SHORT PASSAGE</span>
+    </div>
+    <div class="m-3">
+      <button class="results w-auto pl-4 pr-5 pt-2 pb-2" (click)="changeStateOfTimer()">
+        <fa-icon [icon]="faPlay" class="arrow mr-1"></fa-icon>
+        <span *ngIf="this.passageTimer.isTimerPaused === true" class="w-20">START</span>
+        <span *ngIf="this.passageTimer.isTimerPaused === false" class="w-20">STOP</span>
+      </button>
+      <cd-timer #timer [startTime]="180" format="hms" countdown="true" class="pl-2 timer" (onTick)="resetTimer()"
+                (onComplete)="completeReadingTimer()"></cd-timer>
+    </div>
+    <div class="m-3">{{integratedTask.passage}}</div>
+  </div>
+</div>
+<div *ngIf="writingType === writing.integratedWriting" class="d-flex justify-content-center">
+  <div class="mt-5 writing-block w-90">
+    <div class="writing-title p-3">
+      <span>LISTEN TO PART OF A LECTURE ON THE SAME TOPIC</span>
+    </div>
+    <div class="control ml-3 mt-4 mb-4">
+      <audio class="audio-player w-75" src="./assets/{{writingType | lowercase}}/{{writingNumber}}.mp3"
+             controls controlsList="nodownload" preload="none"></audio>
+    </div>
+  </div>
+</div>
+
+<div class="d-flex justify-content-center">
+  <div class="mt-5 w-90">
+    <div class="d-flex justify-content-between">
+      <div class="w-85">
+        <span *ngIf="writingType === writing.integratedWriting"><span class="font-weight-bold">QUESTION: </span>{{integratedTask.question}}</span>
+        <span *ngIf="writingType === writing.independentWriting"><span class="font-weight-bold">QUESTION: </span>{{writingTitle}}</span>
+      </div>
+      <div class="d-flex align-items-center">
+        Word count: {{wordCount}}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="d-flex justify-content-center mt-1">
+  <textarea class="w-90" rows="20" placeholder="Write your essay here..." [(ngModel)]="essay" (ngModelChange)="countWords()"></textarea>
+</div>
+
+<div class="d-flex justify-content-center">
+  <div class="mt-5 mb-5 writing-block w-90">
+    <div class="writing-title p-3">
+      <span>ESTIMATE YOUR PERFORMANCE</span>
+    </div>
+    <div class="action m-3">Estimate your performance from <span class="font-weight-bold">0</span> to <span class="font-weight-bold">5</span> based on the table below (fractional number is possible)</div>
+    <div class="d-flex justify-content-start mt-3">
+      <input class="form-control width-input ml-3" [(ngModel)]="score" type="number"
+             placeholder="0.0"
+             (keyup)="checkScore()" min="0.0" max="5.0" step="0.1"
+             onkeydown="return event.keyCode !== 69 && event.keyCode !== 107 && event.keyCode !== 109 && event.keyCode !== 189">
+      <button class="results w-auto pl-4 pr-4 pt-2 pb-2 ml-1 mb-3" (click)="submitPerformance()">
+        SUBMIT
+      </button>
+      <button class="results w-auto pl-4 pr-4 pt-2 pb-2 ml-5 mb-3" (click)="manipulateTable()">
+        <fa-icon [icon]="faTable" class="arrow mr-2"></fa-icon>
+        <span *ngIf="showTable === false">SHOW THE TABLE</span>
+        <span *ngIf="showTable === true">HIDE THE TABLE</span>
+      </button>
+    </div>
+    <div [@toggleTable]="showTable === true ? 'open' : 'closed'" *ngIf="(writingType === writing.independentWriting)" class="integrated-writing m-3">
+      <table>
+        <tr>
+          <th>SCORE</th>
+          <th>TASK DESCRIPTION</th>
+        </tr>
+        <tr>
+          <td class="font-weight-bold text-center">5</td>
+          <td>
+            <b>An essay at this level largely accomplishes all of the following:</b>
+            <br>
+            1) Effectively addresses the topic and task
+            <br>
+            2) Is well organized and well developed, using clearly appropriate explanations, exemplifications and/or details
+            <br>
+            3) Displays unity, progression and coherence
+            <br>
+            4) Displays consistent facility in the use of language, demonstrating syntactic variety, appropriate word choice and
+            idiomaticity, though it may have minor lexical or grammatical errors
+          </td>
+        </tr>
+        <tr>
+          <td class="font-weight-bold text-center">4</td>
+          <td>
+            <b>An essay at this level largely accomplishes all of the following:</b>
+            <br>
+            1) Addresses the topic and task well, though some points may not be fully elaborated
+            <br>
+            2) Is generally well organized and well developed, using appropriate and sufficient explanations, exemplifications
+            and/or details
+            <br>
+            3) Displays unity, progression and coherence, though it may contain occasional redundancy, digression, or
+            unclear connections
+            <br>
+            4) Displays facility in the use of language, demonstrating syntactic variety and range of vocabulary, though it will
+            probably have occasional noticeable minor errors in structure, word form or use of idiomatic language that do
+            not interfere with meaning
+          </td>
+        </tr>
+        <tr>
+          <td class="font-weight-bold text-center">3</td>
+          <td>
+            <b>An essay at this level is marked by one or more of the following:</b>
+            <br>
+            1) Addresses the topic and task using somewhat developed explanations, exemplifications and/or details
+            <br>
+            2) Displays unity, progression and coherence, though connection of ideas may be occasionally obscured
+            <br>
+            3) May demonstrate inconsistent facility in sentence formation and word choice that may result in lack of clarity and
+            occasionally obscure meaning
+            <br>
+            4) May display accurate but limited range of syntactic structures and vocabulary
+          </td>
+        </tr>
+        <tr>
+          <td class="font-weight-bold text-center">2</td>
+          <td>
+            <b>An essay at this level may reveal one or more of the following weaknesses:</b>
+            <br>
+            1) Limited development in response to the topic and task
+            <br>
+            2) Inadequate organization or connection of ideas
+            <br>
+            3) Inappropriate or insufficient exemplifications, explanations or details to support or illustrate generalizations in
+            response to the task
+            <br>
+            4) A noticeably inappropriate choice of words or word forms
+            <br>
+            5) An accumulation of errors in sentence structure and/or usage
+          </td>
+        </tr>
+        <tr>
+          <td class="font-weight-bold text-center">1</td>
+          <td>
+            <b>An essay at this level is seriously flawed by one or more of the following weaknesses:</b>
+            <br>
+            1) Serious disorganization or underdevelopment
+            <br>
+            2) Little or no detail, or irrelevant specifics, or questionable responsiveness to the task
+            <br>
+            3) Serious and frequent errors in sentence structure or usage
+          </td>
+        </tr>
+        <tr>
+          <td class="font-weight-bold text-center">0</td>
+          <td>
+            <b>An essay at this level</b> merely copies words from the topic, rejects the topic, or is otherwise not connected to the
+            topic, is written in a foreign language, consists of keystroke characters, or is blank.
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div [@toggleTable]="showTable === true ? 'open' : 'closed'" *ngIf="(writingType === writing.integratedWriting)" class="integrated-writing m-3">
+      <table>
+        <tr>
+          <th>SCORE</th>
+          <th>TASK DESCRIPTION</th>
+        </tr>
+        <tr>
+          <td class="font-weight-bold text-center">5</td>
+          <td>
+            <b>A response at this level</b> successfully selects the important information from the lecture and coherently and accurately
+            presents this information in relation to the relevant information presented in the reading. The response is well
+            organized, and occasional language errors that are present do not result in inaccurate or imprecise presentation
+            of content or connections
+          </td>
+        </tr>
+        <tr>
+          <td class="font-weight-bold text-center">4</td>
+          <td>
+            <b>A response at this level</b> is generally good in selecting the important information from the lecture and in coherently
+            and accurately presenting this information in relation to the relevant information in the reading, but it may have minor
+            omission, inaccuracy, vagueness, or imprecision of some content from the lecture or in connection to points made in
+            the reading. A response is also scored at this level if it has more frequent or noticeable minor language errors, as long
+            as such usage and grammatical structures do not result in anything more than an occasional lapse of clarity or in the
+            connection of ideas.
+          </td>
+        </tr>
+        <tr>
+          <td class="font-weight-bold text-center">3</td>
+          <td>
+            <b>A response at this level contains some important information from the lecture and conveys some
+              relevant connection to the reading, but it is marked by one or more of the following:</b>
+            <br>
+            1) Although the overall response is definitely oriented to the task, it conveys only vague, global, unclear, or somewhat
+            imprecise connection of the points made in the lecture to points made in the reading.
+            <br>
+            2) The response may omit one major key point made in the lecture.
+            <br>
+            3) Some key points made in the lecture or the reading, or connections between the two, may be incomplete, inaccurate,
+            or imprecise.
+            <br>
+            4) Errors of usage and/or grammar may be more frequent or may result in noticeably vague expressions or obscured
+            meanings in conveying ideas and connections.
+          </td>
+        </tr>
+        <tr>
+          <td class="font-weight-bold text-center">2</td>
+          <td>
+            <b>A response at this level contains some relevant information from the lecture, but is marked by significant
+              language difficulties or by significant omission or inaccuracy of important ideas from the lecture or in
+              the connections between the lecture and the reading; a response at this level is marked by one or more
+              of the following:</b>
+            <br>
+            1) The response significantly misrepresents or completely omits the overall connection between the lecture and
+            the reading.
+            <br>
+            2) The response significantly omits or significantly misrepresents important points made in the lecture.
+            <br>
+            3) The response contains language errors or expressions that largely obscure connections or meaning at key junctures
+            or that would likely obscure understanding of key ideas for a reader not already familiar with the reading and
+            the lecture.
+          </td>
+        </tr>
+        <tr>
+          <td class="font-weight-bold text-center">1</td>
+          <td>
+            <b>A response at this level is marked by one or more of the following:</b>
+            <br>
+            1) The response provides little or no meaningful or relevant coherent content from the lecture.
+            <br>
+            2) The language level of the response is so low that it is difficult to derive meaning.
+          </td>
+        </tr>
+        <tr>
+          <td class="font-weight-bold text-center">1</td>
+          <td>
+            <b>A response at this level</b> merely copies sentences from the reading, rejects the topic or is otherwise not
+            connected to the topic, is written in a foreign language, consists of keystroke characters, or is blank.
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

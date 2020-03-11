@@ -29,7 +29,7 @@ const appRoutes: Routes = [
   { path: 'reading-task/:id', component: ReadingTaskComponent },
   { path: 'listening-task/:id/:type/:title', component: ListeningTaskComponent },
   { path: 'speaking-task/:id/:type', component: SpeakingTaskComponent },
-  { path: 'writing-task/:id/:type', component: WritingTaskComponent },
+  { path: 'writing-task/:id/:type/:title', component: WritingTaskComponent },
   {
     path: '',
     component: HomePageComponent,
@@ -41,7 +41,6 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true
 };
 
-// noinspection AngularInvalidImportedOrDeclaredSymbol
 @NgModule({
   declarations: [
     AppComponent,

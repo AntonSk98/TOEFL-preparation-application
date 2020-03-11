@@ -18,7 +18,8 @@ function createWindow() {
     minHeight: 768,
     width: 1366,
     height: 768,
-    resizable: false,
+    fullscreen: true,
+    //resizable: false,
     webPreferences: {
       nodeIntegration: true
     }
@@ -508,5 +509,132 @@ WritingPart: {
         message: 'Error occurred while getting independent writing tasks'
       }))
   });
+  ipcMain.on('get-question-for-integrated-task', async (event, id) => {
+    const result = connection('integratedWriting').select('question').where({id: id}).first();
+    await result.then( question => {
+      mainWindow.send('question-for-integrated-task-sent', question);
+    })
+      .catch(() => mainWindow.send('question-for-integrated-task-sent', {
+        status: 'error',
+        message: 'Error occurred while getting the question for an integrated writing task'
+      }))
+  })
+  ipcMain.on('get-passage-for-integrated-task', async (event, id) => {
+    const result = connection('integratedWriting').select('text').where({id: id}).first();
+    await result.then( passage => {
+      mainWindow.send('passage-for-integrated-task-sent', passage);
+    })
+      .catch(() => mainWindow.send('passage-for-integrated-task-sent', {
+        status: 'error',
+        message: 'Error occurred while getting the passage for an integrated writing task'
+      }))
+  })
+  ipcMain.on('get-integrated-essay', async (event, id) => {
+    const result = connection('integratedWriting').select('essay').where({id: id}).first();
+    await result.then( passage => {
+      mainWindow.send('integrated-essay-sent', passage);
+    })
+      .catch(() => mainWindow.send('integrated-essay-sent', {
+        status: 'error',
+        message: 'Error occurred while getting the essay for an integrated writing task'
+      }))
+  })
+  ipcMain.on('get-independent-essay', async (event, id) => {
+    const result = connection('independentWriting').select('essay').where({id: id}).first();
+    await result.then( passage => {
+      mainWindow.send('independent-essay-sent', passage);
+    })
+      .catch(() => mainWindow.send('independent-essay-sent', {
+        status: 'error',
+        message: 'Error occurred while getting the essay for an independent writing task'
+      }))
+  })
+  ipcMain.on('update-integrated-writing', async (event, id, score, essay) => {
+    connection.transaction(transaction => {
+      connection('integratedWriting').transacting(transaction).update({score: score}).where({id: id})
+        .then(() => {
+          return connection('integratedWriting').transacting(transaction).update({essay: essay}).where({id: id})
+        })
+        .then(transaction.commit)
+        .catch(transaction.rollback)
+    })
+      .then(() => {
+        mainWindow.send("integrated-writing-updated", {
+          status: 'success',
+          message: 'Response is submitted!'
+        });
+      })
+      .catch(() => mainWindow.send("integrated-writing-updated", {
+        status: 'error',
+        message: 'Error occurred while updating the integrated section'
+      }))
+  });
+  ipcMain.on('update-independent-writing', async (event, id, score, essay) => {
+    connection.transaction(transaction => {
+      connection('independentWriting').transacting(transaction).update({score: score}).where({id: id})
+        .then(() => {
+          return connection('independentWriting').transacting(transaction).update({essay: essay}).where({id: id})
+        })
+        .then(transaction.commit)
+        .catch(transaction.rollback)
+    })
+      .then(() => {
+        mainWindow.send("independent-writing-updated", {
+          status: 'success',
+          message: 'Response is submitted!'
+        });
+      })
+      .catch(() => mainWindow.send("independent-writing-updated", {
+        status: 'error',
+        message: 'Error occurred while updating the integrated section'
+      }))
+  });
+  ipcMain.on('get-writing-completeness', async () => {
+    let completed = 0;
+    let nonCompleted = 0;
+    await connection.transaction(transaction => {
+      connection('integratedWriting').transacting(transaction).count().where('score', '>', -1)
+        .then(completedIntegratedCount => {
+          completed += Object.values(completedIntegratedCount[0])[0];
+          return connection('integratedWriting').transacting(transaction).count('score')
+        })
+        .then(nonCompletedIntegratedCount => {
+          nonCompleted += Object.values(nonCompletedIntegratedCount[0])[0];
+          return connection('independentWriting').transacting(transaction).count('score').where('score', '>', -1)
+        })
+        .then(completedIndependentCount => {
+          completed += Object.values(completedIndependentCount[0])[0];
+          return connection('independentWriting').transacting(transaction).count('score')
+        })
+        .then(nonCompletedIndependentCount => {
+          nonCompleted += Object.values(nonCompletedIndependentCount[0])[0]
+        })
+        .then(transaction.commit)
+        .catch(transaction.rollback);
+    })
+      .then(() => mainWindow.send('writing-completeness-sent', Math.round((completed/nonCompleted * 100) * 10) / 10))
+      .catch(err => mainWindow.send('writing-completeness-sent', 'Error occurred while getting completeness info'))
+  });
+  ipcMain.on('get-writing-average-score', async () => {
+    let scoredTasks = 0;
+    let numberOfRows = 0;
+    await connection.transaction(transaction => {
+      connection('integratedWriting').transacting(transaction).select('score').where('score', '>', -1)
+        .then(completedIntegrated => {
+          numberOfRows += completedIntegrated.length;
+          scoredTasks += Object.values(completedIntegrated).reduce((sum,value) => sum + value.score, 0);
+          return connection('independentWriting').transacting(transaction).select('score').where('score', '>', -1)
+        })
+        .then(completedIndependent => {
+          numberOfRows += completedIndependent.length;
+          scoredTasks += Object.values(completedIndependent).reduce((sum,value) => sum + value.score, 0);
+        })
+        .then(transaction.commit)
+        .catch(transaction.rollback);
+    })
+      .then(() => mainWindow.send('writing-average-score-sent', Math.round((scoredTasks/numberOfRows/100*30))))
+      .catch(err => mainWindow.send('writing-average-score-sent', 'Error occurred while getting average score'))
+  })
+
 }
 // npm run start:electron

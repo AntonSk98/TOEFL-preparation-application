@@ -11,6 +11,7 @@ import {
 import {ListeningService} from '../services/listening.service';
 import {AnswerChoice} from '../models/readingEntity';
 import {Subscription} from 'rxjs';
+import {NotificationService} from "../services/notification.service";
 
 @Component({
   selector: 'app-listening-task',
@@ -42,6 +43,7 @@ export class ListeningTaskComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private listeningService: ListeningService,
+    private notificationService: NotificationService
   ) {
   }
 
@@ -68,7 +70,7 @@ export class ListeningTaskComponent implements OnInit, OnDestroy {
   }
 
   completeTimer() {
-    setTimeout(() => alert('Your time is up, but since it is just practice feel free to continue :)'), 500);
+    setTimeout(() => this.notificationService.showWarning('Your time is up, but since it is just practice feel free to continue :)'), 500);
   }
 
   startTask() {

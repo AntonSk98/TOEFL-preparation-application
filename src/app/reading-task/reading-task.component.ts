@@ -5,6 +5,7 @@ import { CdTimerComponent } from 'angular-cd-timer';
 import { ReadingService } from '../services/reading.service';
 import { AnswerChoice, CorrectAnswer, ReadingEntity } from '../models/readingEntity';
 import {Subscription} from 'rxjs';
+import {NotificationService} from "../services/notification.service";
 
 @Component({
   selector: 'app-reading-task',
@@ -35,7 +36,8 @@ export class ReadingTaskComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
-    private readingService: ReadingService
+    private readingService: ReadingService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit() {
@@ -55,7 +57,7 @@ export class ReadingTaskComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   stopTimer() {
-    setTimeout(() => alert('Your time is up, but since it is just practice feel free to continue :)'), 500);
+    setTimeout(() => this.notificationService.showWarning('Your time is up, but since it is just practice feel free to continue :)'), 500);
   }
 
   moveBack() {

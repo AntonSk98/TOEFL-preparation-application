@@ -9,6 +9,7 @@ import {ReadingService} from '../services/reading.service';
 import {ListeningService} from '../services/listening.service';
 import {SpeakingService} from '../services/speaking.service';
 import {Subscription} from 'rxjs';
+import {WritingService} from '../services/writing.service';
 
 @Component({
   selector: 'app-schedule',
@@ -37,7 +38,8 @@ export class ScheduleComponent implements OnInit, OnDestroy {
     private notificationService: NotificationService,
     private readingService: ReadingService,
     private listeningService: ListeningService,
-    private speakingService: SpeakingService
+    private speakingService: SpeakingService,
+    private writingService: WritingService
   ) {
   }
 
@@ -56,6 +58,8 @@ export class ScheduleComponent implements OnInit, OnDestroy {
       .add(this.listeningService.getAverageScore().subscribe((value: number) => this.averageProgress.averageListening = value));
     this.subscriptions
       .add(this.speakingService.getAverageScore().subscribe((value: number) => this.averageProgress.averageSpeaking = value));
+    this.subscriptions
+      .add(this.writingService.getAverageScore().subscribe((value: number) => this.averageProgress.averageWriting = value));
   }
   convertDateToNGBDATE(testDate: string): NgbDateStruct {
     const date = new Date(testDate);
