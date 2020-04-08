@@ -1,6 +1,6 @@
-# AppToefl
+# Application Overview
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.23.
+This program was created to allow students to sufficiently prepare for their upcoming TOEFL exams. This app includes a lot of tasks from all the TOEFL sections like reading, writing, listening as well as speaking. Students are also able to customize their test date, target score and see their average score for each section of TOEFL.
 
 ## Development server
 
