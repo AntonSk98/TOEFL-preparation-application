@@ -70,6 +70,6 @@
     </div>
     <hr>
     <div *ngIf="!isEdited" class="edit mb-4 ml-3" (click)="changeEdited()"><fa-icon [icon]="faEdit" class="pl-1"></fa-icon> Edit target score</div>
-    <button *ngIf="isEdited" class="btn btn-sm btn pr-5 mb-4 ml-3" (click)="toSave()" style="font-size: 20px">Save</button>
+    <button *ngIf="isEdited" class="btn btn-sm btn pr-5 mb-4 ml-3 w-25" (click)="toSave()" style="font-size: 20px">Save</button>
   </div>
 </div>
