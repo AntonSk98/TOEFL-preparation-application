@@ -15,9 +15,11 @@ Each reading task includes a passage, questions to it, and the right answers aft
 <b>Some photos of the reading section.<b>
 
 First reading photo
+
 ![alt text](toefl_preparation_reading_text_example.PNG)
 
 Second reading photo
+
 ![alt text](toefl_preparation_reading_results_review.PNG)
 
 The listening section includes either a lecture or a conversation and a number of questions with answers.
