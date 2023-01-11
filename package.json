@@ -40,7 +40,7 @@
     "flexbox": "0.0.3",
     "hammerjs": "^2.0.8",
     "jquery": "^3.4.1",
-    "knex": "^0.20.8",
+    "knex": "^2.4.0",
     "mdbootstrap": "^4.12.0",
     "ngx-audio-player": "^8.0.2",
     "ngx-electron": "^2.2.0",
